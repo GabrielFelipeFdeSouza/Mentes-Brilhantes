@@ -4,7 +4,6 @@
 #### Professor Orientador: Muriel de Souza Godoi  
 #### Universidade Tecnológica Federal do Paraná (UTFPR) - Campus Apucarana  
 
-<p>TXT</p>
 
 ---
 
