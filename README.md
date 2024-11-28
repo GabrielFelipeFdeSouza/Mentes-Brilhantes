@@ -34,7 +34,8 @@ Instruções detalhadas de como compilar o jogo estão nesta seção!
 
     5. Execute o comando
 ```
-a
+make run
+```
      Para limpar os arquivos de compilação e binários do jogo;
 
 ---
