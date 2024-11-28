@@ -21,9 +21,11 @@
 ## 🔧 Compilação:  
 Instruções detalhadas de como compilar o jogo estão nesta seção!
 
-- Ambiente Windowns:
+- Ambiente Windows:
     Para esse abiente de execução siga os passos abaixo:
     1. Baixe o repositório Mentes Brilhantes, [git clone https://github.com/usuario/projeto.git](https://github.com/GabrielFelipeFdeSouza/super-trunfo);
+    2. Baixe o compilador (se ainda não possuir) *MINGW-64*, pelo link: https://github.com/skeeto/w64devkit/releases/download/v2.0.0/w64devkit-x64-2.0.0.exe, e execute o arquivo;
+    3. Coloque o patch Bin do compilador nas variaveis de ambiente do seu Windows, se achar dificuldades o video https://www.youtube.com/watch?v=aducc6-ra90, pode ser útil;
 
 ---
 
