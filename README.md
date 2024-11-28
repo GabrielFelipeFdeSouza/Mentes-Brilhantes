@@ -21,7 +21,7 @@
 ## 🔧 Compilação:  
 Instruções detalhadas de como compilar o jogo estão nesta seção!
 
-##Ambiente Windows:
+## Ambiente Windows:
 Para esse abiente de execução siga os passos abaixo:
 1. Baixe o repositório Mentes Brilhantes, [git clone https://github.com/usuario/projeto.git](https://github.com/GabrielFelipeFdeSouza/super-trunfo);
 
@@ -43,7 +43,7 @@ Para esse abiente de execução siga os passos abaixo:
     ```
     Para compilar os arquivos
 
-##Ambiente Linux: 
+## Ambiente Linux: 
 Para esse abiente de execução siga os passos abaixo:
 Por padrão o ambiente *linux* ja vem com o compilador correto instalado, mas há passos a serem seguidos:
 1. Baixe o repositório Mentes Brilhantes, [git clone https://github.com/usuario/projeto.git](https://github.com/GabrielFelipeFdeSouza/super-trunfo);
