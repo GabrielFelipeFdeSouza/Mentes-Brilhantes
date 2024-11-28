@@ -49,9 +49,9 @@ Por padrão o ambiente *linux* ja vem com o compilador correto instalado, mas h�
 1. Baixe o repositório Mentes Brilhantes, [git clone https://github.com/usuario/projeto.git](https://github.com/GabrielFelipeFdeSouza/super-trunfo);
 
 2. Instale as dependencias para as bibliotecas de video e audio, execute o sefuinte comando como administrador no terminal:
-```
-sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
-```
+    ```
+    sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+    ```
 
 3. Navegue até a pasta do jogo usando "CD" e "LS", a pasta principal é a que contem o arquvio MAKEFILE, dentro dela siga os próximos passos:
 
@@ -71,6 +71,14 @@ sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-d
 ## 🛠️ Requisitos:  
 Listagem de dependências e ferramentas necessárias para rodar o jogo:
 
+### Ambiente Windows:
+Os requesitos de execução nesse ambiente giram em torno dos próprios requesitos da raylib (Biblioteca gráfica usada):
+
+1. OPEN-GL: Esse é um dos requesitos que a raylib possui, em geral, placas de video mais novas, ou atualizadas já possuem versão compativel para a raylib!
+
+2. DirectX: Para esse ambiente, o directX é nescessário  já que são uma série de api's multitarefas pensadas para jogos!
+
+3. Permissão de Administração para jogar em modo "Multiplayer", pois esse recurso nescessita de acesso a rede e passagem por firewalls, *pode ocorrer de funcionar sem permisão em alguns casos*.
 ---
 
 ## 🎮 Como Jogar:  
