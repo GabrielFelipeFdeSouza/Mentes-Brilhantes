@@ -22,6 +22,7 @@
 Instruções detalhadas de como compilar o jogo estão nesta seção!
 
 - Ambiente Windowns:
+  
 Para esse abiente de
 
 ---
