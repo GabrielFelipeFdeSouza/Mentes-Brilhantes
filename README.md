@@ -29,7 +29,7 @@ Para esse abiente de execução siga os passos abaixo:
 
 3. Coloque o patch Bin do compilador nas variaveis de ambiente do seu Windows, se achar dificuldades o video https://www.youtube.com/watch?v=aducc6-ra90, pode ser útil;
 
-4. Navegue até a pasta do jogo usando "CD" e "DIR", a pasta principal é a que contem o arquvio MAKEFILE, dentro dela siga os próximos passos:
+4. Pelo terminal navegue até a pasta do jogo usando "CD" e "DIR", a pasta principal é a que contem o arquvio MAKEFILE, dentro dela siga os próximos passos:
 
 5. Execute o comando
     ```
@@ -53,7 +53,7 @@ Por padrão o ambiente *linux* ja vem com o compilador correto instalado, mas h�
     sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
     ```
 
-3. Navegue até a pasta do jogo usando "CD" e "LS", a pasta principal é a que contem o arquvio MAKEFILE, dentro dela siga os próximos passos:
+3. Pelo terminal navegue até a pasta do jogo usando "CD" e "LS", a pasta principal é a que contem o arquvio MAKEFILE, dentro dela siga os próximos passos:
 
 4. Execute o comando
     ```
