@@ -78,8 +78,18 @@ Os requesitos de execução nesse ambiente giram em torno dos próprios requesit
 
 2. DirectX: Para esse ambiente, o directX é nescessário  já que são uma série de api's multitarefas pensadas para jogos!
 
-3. Permissão de Administração para jogar em modo "Multiplayer", pois esse recurso nescessita de acesso a rede e passagem por firewalls, *pode ocorrer de funcionar sem permisão em alguns casos*.
+3. Permissão de Administração para jogar em modo "Multiplayer", pois esse recurso nescessita de acesso a rede e passagem por firewalls. *Pode ocorrer de funcionar sem permisão em alguns casos*.
+
+
+### Ambiente Linux:
+Nesse ambiente os requesitos são parecidos com os do windowns, mas há um detalhe adicional:
+
+1. Bibliotecas e api gráfica atualizadas: Em geral, para evitar imcompatibilidade com a raylib, manter esses dois itens sempre atualizados evita esses problemas.
+
+2. Bibliotecas de audio e vídeo: Durante a compilação no *passo 2*, mostramos bibliotecas adicionais nescessárias para compilação do jogo.
 ---
 
 ## 🎮 Como Jogar:  
 Explicações e regras do jogo, incluindo dicas e estratégias.
+
+//FUTURO
