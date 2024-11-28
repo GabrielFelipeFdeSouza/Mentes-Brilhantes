@@ -32,9 +32,9 @@ Instruções detalhadas de como compilar o jogo estão nesta seção!
     4. Navegue até a pasta do jogo usando "CD" e "LS", a pasta principal é a que contem o arquvio MAKEFILE, dentro dela siga os próximos passos:
 
     5. Execute o comando
-... 
+''' bash
 make clean 
-... 
+
      Para limpar os arquivos de compilação e binários do jogo;
 
 ---
