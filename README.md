@@ -82,7 +82,7 @@ Os requesitos de execução nesse ambiente giram em torno dos próprios requesit
 
 
 ### Ambiente Linux:
-Nesse ambiente os requesitos são parecidos com os do windowns, mas há um detalhe adicional:
+Nesse ambiente os requesitos são parecidos com os do windows, mas há um detalhe adicional:
 
 1. Bibliotecas e api gráfica atualizadas: Em geral, para evitar imcompatibilidade com a raylib, manter esses dois itens sempre atualizados evita esses problemas.
 
