@@ -22,8 +22,9 @@
 Instruções detalhadas de como compilar o jogo estão nesta seção!
 
 - Ambiente Windowns:
-  
-Para esse abiente de
+    Para esse abiente de execução siga os passos abaixo:
+    1. Baixe o repositório Mentes Brilhantes,    ```bash
+   git clone https://github.com/usuario/projeto.git
 
 ---
 
