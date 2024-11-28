@@ -48,7 +48,7 @@ Para esse abiente de execução siga os passos abaixo:
 Por padrão o ambiente *linux* ja vem com o compilador correto instalado, mas há passos a serem seguidos:
 1. Baixe o repositório Mentes Brilhantes, [git clone https://github.com/usuario/projeto.git](https://github.com/GabrielFelipeFdeSouza/super-trunfo);
 
-2. Instale as dependencias para as bibliotecas de video e audio, execute o sefuinte comando como administrador no terminal:
+2. Instale as dependencias para as bibliotecas de video e audio, execute o seguinte comando como administrador no terminal:
     ```
     sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
     ```
