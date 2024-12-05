@@ -4,5 +4,5 @@
 
 #include "raylib.h"
 void salvarDados();
-
+int exportarCsv();
 #endif //ESCREVER_ARQUIVO_H

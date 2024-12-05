@@ -1,11 +1,10 @@
 // FUNÇÕES PARA A TELA DE MENU - SEM SER PARTE DE DESENHO
 
 #ifdef _WIN32 //Testa se o SO é Windows
-    #include "../dependencias.h"
-    #else
-    #include "dependencias.h"
-    #endif //Inclui relaativamente os arquivos de dependencia
-
+      #include "../dependencias.h"   
+#else
+    #include "./dependencias.h"
+#endif
 
 // Função de declaração do menu:
 void menu(RenderTexture2D *target, Music *musica, Sound sons[])
@@ -26,7 +25,7 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
     botao_menu_som[0].cor_botao = NOSSO_AZUL;
 
     // Carregando as imagens:
-    Texture2D fundoss = LoadTexture("img/fundo.png"); //Carrega a imagem btn com som
+    Texture2D fundoss = LoadTexture("img/fundo-menu.png"); //Carrega a imagem btn com som
     Texture2D fundo = ResizeTexture(fundoss, 1000, 600); //Carrega a imagem btn com som
     Texture2D btn_c_som_cru = LoadTexture("img/c-som.png"); //Carrega a imagem btn com som
     Texture2D btn_s_som_cru = LoadTexture("img/s-som.png"); //Carrega a imagem btn sem som
@@ -35,13 +34,16 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
     Texture2D img_btn_som = btn_c_som;
 
     // Condição de tela:
-    while (!WindowShouldClose() && (tela == 0 || tela == 2))
+    while (tela == 0 || tela == 2)
     {
 
+        //ESCALA:
         scaleX = (float)GetScreenWidth() / COMPRIMENTO_TELA;
         scaleY = (float)GetScreenHeight() / ALTURA_TELA;
         scale = (scaleX < scaleY) ? scaleX : scaleY;
 
+        //CONTROLES GERAIS:
+        checarSaida(); //Chama a função que verifica se o usuário saiu
         checarTelaCheia(); //Chama função que verifica as condições de tela cheia
         leMouse(); // Chama a função global de leitura de mouse
         desenhoMenu(target, botoes_menu, 5, *botao_menu_som, img_btn_som, fundo); // Chama a função de desenho objetos do menu
@@ -108,8 +110,7 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
                 UnloadTexture(btn_s_som_cru);
                 UnloadTexture(img_btn_som);
                 UnloadRenderTexture(*target);
-                tela = 7;
-                CloseWindow();
+                tela = 10;
             } // Espera tocar para sair se o usuário deseja sair
             break;
 

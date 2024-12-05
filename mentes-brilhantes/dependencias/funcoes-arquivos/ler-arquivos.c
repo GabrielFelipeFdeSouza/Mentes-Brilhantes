@@ -6,6 +6,8 @@
 
 int carregarDadosCSV(const char *nomeArquivo, Carta **cartas) {
 
+    printf("\nLendo do arquivo CSV!\n");
+
     char super_trunfo[10]; //Para uso se é supertrunfo durante a leitura
 
     //Constantes:
@@ -14,8 +16,7 @@ int carregarDadosCSV(const char *nomeArquivo, Carta **cartas) {
     //Abre o arquivo:
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (arquivo == NULL) {
-        perror("Erro ao abrir o arquivo");
-        exit(1);
+        return 0;
     } //Verifica se o arquivo existe e abre-o
 
     //Variaveis:
@@ -28,7 +29,7 @@ int carregarDadosCSV(const char *nomeArquivo, Carta **cartas) {
     if (*cartas == NULL) {
         perror("Erro ao alocar memória");
         fclose(arquivo);
-        exit(1);
+        return 0;
     } //Aloca o vetor de cartas inicialmente para 32 - se houver mais o realoc trata
 
     //Le cada linha do arquivo:
@@ -40,7 +41,7 @@ int carregarDadosCSV(const char *nomeArquivo, Carta **cartas) {
             if (*cartas == NULL) {
                 perror("Erro ao realocar memória");
                 fclose(arquivo);
-                exit(1);
+                return 0;
             }
         } //Se nescessario realocar memoria
 
@@ -74,6 +75,7 @@ bool verificaOuCriaArquivoBinario(const char *nomeArquivo) {
     //O arquivo não existe, tenta criá-lo:
     arquivo = fopen(nomeArquivo, "wb");
     if (arquivo) {
+        printf("\nArquivo binário não indentificado, criado um novo!\n");
         //Arquivo criado com sucesso, fecha e retorna false
         fclose(arquivo);
         return false;
@@ -85,14 +87,17 @@ bool verificaOuCriaArquivoBinario(const char *nomeArquivo) {
 }
 
 int carregarDadosBIN(const char *nomeArquivo, Carta **cartas) {
+
+    printf("\nLendo do arquivo BIN!\n");
+
     //Abre o arquivo:
     FILE *arquivo = fopen(nomeArquivo, "rb");
     if (!arquivo) {
         perror("Erro ao abrir o arquivo binario");
-        exit(1);
+        return 0;
     } //Verifica se o arquivo existe e abre-o
 
-    int quantidade; //Usada para alocar memória apenas para a quantidade de cartas contidas no arquivo binario
+    int quantidade = 0; //Usada para alocar memória apenas para a quantidade de cartas contidas no arquivo binario
     fread(&quantidade, sizeof(int), 1, arquivo); //Le a quantidade de cartas que tem no arquivo, essa info é a primeira do arquivo
 
     //Aloca memória para o vetor de cartas
@@ -102,7 +107,7 @@ int carregarDadosBIN(const char *nomeArquivo, Carta **cartas) {
     if((int) fread(*cartas, sizeof(Carta), quantidade, arquivo) != quantidade){
         perror("Erro ao ler arquivo bin");
         fclose(arquivo); //Fecha o arquivo
-        exit(1);
+        return 0;
     }
 
     fclose(arquivo); //Fecha o arquivo

@@ -23,7 +23,7 @@ typedef struct
 {
     int id;         //numero da carta pq o gabriel pediu   
     bool super_trunfo;      //checa pra ver se e super
-    char hexadecimal[2];    //numeros e letras que ficam no canto da carta kk
+    char hexadecimal[5];    //numeros e letras que ficam no canto da carta kk
     char imagem[256];       //Char para endereço relativo das imagens da carta
     char nome[51];
     unsigned int curiosidade;

@@ -17,6 +17,7 @@ extern Vector2 posicao_tela; // Posição da tela
 extern bool esta_mudo; //Controle geral de sons
 extern bool trocar_tela; //Controle geral se usuário quer mudar de tela, evitar congelamentos
 extern int quantidade_cartas; //Inteiro que salva a quantidade total de cartas na abertura dos arquivos
+extern Color *cor_aleatoria; //Usada nas cores aleatorias do game
 
 // Funções
 Texture2D ResizeTexture(Texture2D texture, int newWidth, int newHeight);

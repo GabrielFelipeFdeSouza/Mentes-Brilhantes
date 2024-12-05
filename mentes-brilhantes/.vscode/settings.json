@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "desenho-menu.h": "c",
+        "funcoes-menu.h": "c",
+        "dependencias.h": "c",
+        "math.h": "c",
+        "ler-arquivos.h": "c"
+    }
+}

@@ -10,4 +10,8 @@ void desenharBotaoTxt();
 void desenharBotaoNulo();
 bool resaltaBotoes();
 void resaltaBotoesNulo();
+void resaltaBotaoInvisivel();
+void desenhaCarta();
+void desenhoRedimensionado();
+void telaErro();
 #endif

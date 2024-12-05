@@ -5,35 +5,57 @@ else
   OS := $(strip $(shell uname))
 endif
 
-#Diretorio do arquivo binário:
-PATCH = ./data/cartas.bin
-
-#Inclui os arquivos e flags para compilação em cada S.O:
+# Configuração para Windows ou Unix:
 ifeq ($(OS),Windows_NT)
-	INCLUDE = -I./include/ -L./libwin
-	EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -Wno-missing-braces -lraylib -lm -lopengl32 -lgdi32 -lwinmm -lws2_32
-	BIN = ./mentes-brilhantes.exe
+  INCLUDE = -I./include/ -L./libwin
+  EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -Wno-missing-braces -lraylib -lm -lopengl32 -lgdi32 -lwinmm -lws2_32
+  BIN = ./mentes-brilhantes.exe
 else
-	INCLUDE=-I./include/ -L./lib
-	EXTRA_FLAGS = -Wall -Werror -Wextra -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 
-	BIN = ./mentes-brilhantes
+  INCLUDE = -I./
+  EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+  BIN = ./mentes-brilhantes
 endif
 
-# Encontrar todos os arquivos .c recursivamente em subpastas, excluindo a pasta raylib (exclusão de arquivos da biblioteca):
-SRC = $(shell find . -name "*.c" -not -path "./raylib/*")
+# Encontrar todos os arquivos .c recursivamente:
+SRC = $(shell find . -name "*.c")
 
-#Compilação:
-all:
-	@echo "Compilando..."
-	gcc $(SRC) -g $(EXTRA_FLAGS) $(INCLUDE) -o $(BIN)
+# Função principal:
+all: $(BIN)
 
-#Execução:
-run:
-	@echo "Executando..."
+$(BIN): $(SRC)
+	@echo "Compilando o jogo com as seguintes configurações:"
+	@echo ""
+	@echo "Sistema Operacional: $(OS)"
+	@echo ""
+	@echo "Arquivos fontes: $(SRC)"
+	@echo ""
+	@echo "Incluindo: $(INCLUDE)"
+	@echo ""
+	@echo "Flags: $(EXTRA_FLAGS)"
+	@echo ""
+	@gcc $(SRC) -g $(EXTRA_FLAGS) $(INCLUDE) -o $(BIN)
+	@if [ $$? -eq 0 ]; then \
+		echo "Compilação concluída com sucesso! Executável: $(BIN)"; \
+	else \
+		echo "Erro na compilação! Verifique o código e tente novamente."; \
+		exit 1; \
+	fi
+
+# Comando para rodar o jogo:
+run: all
+	@echo "------- INICIANDO JOGO --------"
 	$(BIN)
 
-#Limpeza:
+# Limpeza de arquivos binários e executáveis:
 clean:
-	@echo "Limpando arquivos binários e executavel..."
+	@echo "Removendo arquivos executáveis e binários antigos!"
 	$(RM) $(BIN)
-	$(RM) $(PATCH)
+	$(RM) -f ./data/cartas.bin
+	@echo "Limpeza concluída!"
+
+# Função para depurar:
+debug: all
+	@echo "Iniciando em modo de depuração..."
+	gdb $(BIN)
+
+.PHONY: all run clean debug

@@ -9,5 +9,6 @@ bool coresIguais();
 bool checarClique();
 void controleSons();
 void checarTelaCheia();
-
+void checarSaida();
+void abrePdf();
 #endif

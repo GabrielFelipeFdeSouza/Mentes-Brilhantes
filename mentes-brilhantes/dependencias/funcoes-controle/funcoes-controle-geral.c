@@ -23,6 +23,15 @@ void leMouse()
     return;
 } //Função de leitura da posição do cursor em relação à janela aberta
 
+void checarSaida(){
+
+    if(WindowShouldClose()){
+        tela = 10;
+    } //Se a tela for fechada pelo usuário ou funções de sair, seta tela = 10 para uso na main
+
+    return;
+} //Função que verifica se o usuário quer sair
+
 bool checarClique(Rectangle *botao)
 {
     if (IsMouseButtonPressed(0) && CheckCollisionPointRec(posicao_mouse, *botao))
@@ -64,10 +73,11 @@ void checarTelaCheia(){
     {
         int display = GetCurrentMonitor(); // mostra em qual monitor estamos, caso tenha mais de 1
 
-        if (IsWindowFullscreen())
+        //if (IsWindowFullscreen())
+        if(GetScreenWidth() > 1000)
         {
             // Se estiver já em tela cheia:
-            ToggleFullscreen();                                // Tira de telacheia
+            //ToggleFullscreen();                                // Tira de telacheia
             SetWindowSize(COMPRIMENTO_TELA, ALTURA_TELA);      // Seta o tamanho da tela para o original
             SetWindowPosition(posicao_tela.x, posicao_tela.y); // Seta a posição para o meio
         }
@@ -75,8 +85,21 @@ void checarTelaCheia(){
         {
             posicao_tela = GetWindowPosition();                                 // Obtem a posição de tela antes de redimensionar para mudar depois
             SetWindowSize(GetMonitorWidth(display), GetMonitorHeight(display)); // Seta para o tamanho max do monitor
-            ToggleFullscreen();                                                 // Coloca em telacheia
+            SetWindowPosition(0, 0); // Seta a posição para o 0,0 do monitor
+            //ToggleFullscreen();                                                 // Coloca em telacheia
         }
 
     } // Fim if muda estado pelo F11
-} //Função que checa estados de tela cheia e tecal F11 para togle disso
+} //Função que checa estados de tela cheia e tecla F11 para togle disso
+
+
+void abrePdf() {
+    printf("\nAbrindo PDF inicial...\n");
+    #ifdef _WIN32
+        system("start ./data/instrucoes.pdf");
+    #elif __linux__
+        system("xdg-open ./data/instrucoes.pdf");
+    #else
+        printf("Sistema operacional não suportado.\n");
+    #endif
+}
