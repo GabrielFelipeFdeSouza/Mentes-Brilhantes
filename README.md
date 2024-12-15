@@ -8,7 +8,7 @@
 
 ## 👨‍🎓 **Alunos:**  
 - **Gabriel Felipe Ferdinandi de Souza;**  
-- **Gustavo Ferreira da Fonsceca;**  
+- **Gustavo Ferreira da Fonseca;**  
 - **Thiago André Mattos Málaga;**  
 
 ---
