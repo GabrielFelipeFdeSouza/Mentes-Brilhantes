@@ -32,4 +32,43 @@ typedef struct
     unsigned int idade;
 }Carta;
 
+typedef struct
+{
+    int index;                  //pra saber qual
+    char texto[20];
+    Vector2 centro;             //centro do circulo do botao de radio
+    float raio;                 //raio do botao;
+    Color cor;
+    bool estado;                 //caso o botao esteja ativado
+    int grupo;
+    
+
+}RadioButton;
+
+typedef struct
+{
+    Rectangle caixa;
+    Color cor_caixa;
+    char texto[128];
+    char texto_placeholder[128];
+    Color cor_texto;
+    bool placeholder;
+    bool habilitado;
+    int tamanho;
+    int subgrupo;
+    int subcaixa;
+}TextBox;
+
+typedef struct
+{
+    int index;                  //pra saber qual
+    char texto[20];
+    Rectangle quadrado;
+    Color cor;
+    bool estado;                 //caso o botao esteja ativado
+    int grupo;
+    
+}Seletor;
+
+
 #endif // STRUCTS_GERAIS_H

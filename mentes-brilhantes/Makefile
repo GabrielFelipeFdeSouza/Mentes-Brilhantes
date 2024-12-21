@@ -1,22 +1,22 @@
-# Verifica o sistema operacional:
+#Verifica o sistema operacional:
 ifdef OS
-  OS := $(strip $(OS))
+    OS := $(strip $(OS))
 else
-  OS := $(strip $(shell uname))
+    OS := $(strip $(shell uname))
 endif
 
-# Configuração para Windows ou Unix:
+#Configuração para Windows ou Unix:
 ifeq ($(OS),Windows_NT)
-  INCLUDE = -I./include/ -L./libwin
-  EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -Wno-missing-braces -lraylib -lm -lopengl32 -lgdi32 -lwinmm -lws2_32
-  BIN = ./mentes-brilhantes.exe
+    INCLUDE = -I./include/ -L./libwin
+    EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -Wno-missing-braces -lraylib -lm -lopengl32 -lgdi32 -lwinmm -lws2_32
+    BIN = ./mentes-brilhantes.exe
 else
-  INCLUDE = -I./
-  EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
-  BIN = ./mentes-brilhantes
+    INCLUDE = -I./
+    EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+    BIN = ./mentes-brilhantes
 endif
 
-# Encontrar todos os arquivos .c recursivamente:
+#Encontrar todos os arquivos .c recursivamente:
 SRC = $(shell find . -name "*.c")
 
 # Função principal:
@@ -41,21 +41,29 @@ $(BIN): $(SRC)
 		exit 1; \
 	fi
 
-# Comando para rodar o jogo:
+#Comando para rodar o jogo:
 run: all
 	@echo "------- INICIANDO JOGO --------"
 	$(BIN)
 
-# Limpeza de arquivos binários e executáveis:
+#Limpeza de arquivos binários e executáveis:
 clean:
 	@echo "Removendo arquivos executáveis e binários antigos!"
 	$(RM) $(BIN)
 	$(RM) -f ./data/cartas.bin
 	@echo "Limpeza concluída!"
 
-# Função para depurar:
+#Função para depurar:
 debug: all
 	@echo "Iniciando em modo de depuração..."
 	gdb $(BIN)
 
 .PHONY: all run clean debug
+
+#Exibe uma ajuda para o usuário:
+help: 
+	@echo "OPÇÕES:"
+	@echo ""
+	@echo "make run -> Compila o jogo para o SO do windows ou linux(AUTOMÁTICO)"
+	@echo ""
+	@echo "make clean -> Remove arquivos executaveis antigos e BIN's temporários"

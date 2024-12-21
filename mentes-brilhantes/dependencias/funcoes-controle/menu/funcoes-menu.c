@@ -48,8 +48,7 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
         leMouse(); // Chama a função global de leitura de mouse
         desenhoMenu(target, botoes_menu, 5, *botao_menu_som, img_btn_som, fundo); // Chama a função de desenho objetos do menu
         controleSons(0, *musica, sons[0]); // Função de controle geral sons - mantem musica tocando
-        resaltaBotoes(botoes_menu, 5, *musica, sons[0]); //Função que checa se o usuário esta sob um btn
-        resaltaBotoesNulo(botao_menu_som, 1); //Função que checa se o usuário esta sob um btn
+        resaltaBotoes(botoes_menu, 5, *musica, sons[0], &botao_menu_som, 1); //Função que checa se o usuário esta sob um btn
 
         // CHECAGEM DE CLIQUE DOS BOTÕES:
 

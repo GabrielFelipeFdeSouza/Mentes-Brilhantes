@@ -9,9 +9,12 @@ int criarBotaoTxtRedimensionavel();
 void desenharBotaoTxt();
 void desenharBotaoNulo();
 bool resaltaBotoes();
-void resaltaBotoesNulo();
-void resaltaBotaoInvisivel();
 void desenhaCarta();
 void desenhoRedimensionado();
 void telaErro();
+void desenhaRadioButton();
+void resaltaRadioButton();
+void desenhaTextBox();
+void desenhaSeletor();
+
 #endif

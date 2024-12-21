@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 
-// Declaração das funções
+// DeclaraÃ§Ã£o das funÃ§Ãµes
 void leMouse();
 bool coresIguais();
 bool checarClique();
@@ -11,4 +11,7 @@ void controleSons();
 void checarTelaCheia();
 void checarSaida();
 void abrePdf();
+void checaRadioButton();
+void leTeclado();
+void checaSeletor();
 #endif

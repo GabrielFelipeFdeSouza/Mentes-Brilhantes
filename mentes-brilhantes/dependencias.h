@@ -19,6 +19,10 @@
 #include "./dependencias/funcoes-controle/gerenciador/funcoes-deck.h"
 #include "./dependencias/funcoes-arquivos/ler-arquivos.h"
 #include "./dependencias/funcoes-arquivos/escrever-arquivos.h"
+#include "./dependencias/funcoes-cartas/excluir-cartas.h"
+#include "./dependencias/funcoes-cartas/adicionar-cartas.h"
+#include "./dependencias/funcoes-cartas/editar-cartas.h"
+#include "./dependencias/funcoes-cartas/pesquisa-cartas.h"
 
 
 //Definindo as cores - fora das padrões:

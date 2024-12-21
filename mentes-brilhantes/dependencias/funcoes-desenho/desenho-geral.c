@@ -61,7 +61,27 @@ void desenharBotaoNulo(BotaoNulo botao)
     return;
 }
 
-bool resaltaBotoes(Botao botoes[], int quantidade_botoes, Music musica, Sound som_clique_btn){
+bool resaltaBotoes(Botao botoes[], int quantidade_botoes, Music musica, Sound som_clique_btn, BotaoNulo botoes_nulos[], int quantidade_botoes_nulos, BotaoNulo botoes_invisiveis[], int quantidade_botoes_invisiveis){
+
+    for(int u = 0; u < quantidade_botoes_nulos; u++){
+
+        if(CheckCollisionPointRec(posicao_mouse, botoes_nulos[u].colisao)){
+            botoes_nulos[u].cor_botao = NOSSO_CIANO;
+            SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+            return true;
+        } else{
+            botoes_nulos[u].cor_botao = NOSSO_AZUL;
+        }
+    } //Resalta botoes nulos
+
+    for(int u = 0; u < quantidade_botoes_invisiveis; u++){
+        if(CheckCollisionPointRec(posicao_mouse, botoes_invisiveis[u].colisao)){
+            SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+            return true;
+        } else{
+            SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        }
+    } //Resalta botoes invisiveis
 
     for(int t = 0; t < quantidade_botoes; t++){
         if(!coresIguais(botoes[t].cor_botao, GREEN)){
@@ -93,28 +113,6 @@ bool resaltaBotoes(Botao botoes[], int quantidade_botoes, Music musica, Sound so
     return false;
 }
 
-void resaltaBotoesNulo(BotaoNulo botoes[], int quantidade_botoes){
-    for(int u = 0; u < quantidade_botoes; u++){
-
-        if(CheckCollisionPointRec(posicao_mouse, botoes[u].colisao)){
-            botoes[u].cor_botao = NOSSO_CIANO;
-            SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-        } else{
-            botoes[u].cor_botao = NOSSO_AZUL;
-        }
-    }
-}
-
-
-void resaltaBotaoInvisivel(BotaoNulo botoes[], int quantidade_botoes){
-    for(int u = 0; u < quantidade_botoes; u++){
-        if(CheckCollisionPointRec(posicao_mouse, botoes[u].colisao)){
-            SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-        } else{
-        }
-    }
-} 
-
 
 void desenhaCarta(int x, int y, Texture2D *frente_carta, Carta *carta, Texture2D *img_carta){
 
@@ -128,10 +126,15 @@ void desenhaCarta(int x, int y, Texture2D *frente_carta, Carta *carta, Texture2D
         DrawRectangle(x + 21, y + 244 + t * 45, 244, 35, NOSSO_BEGE);
     }
 
+    if(carta->hexadecimal[0] == '9' && carta->hexadecimal[1] == 'Z'){
+        DrawText(TextFormat("SEM CARTAS QUE", carta->inovacao), x+25 , y+100 , 26, RED);
+        DrawText(TextFormat("CORRESPONDEM!", carta->inovacao), x+30 , y+129 , 26, RED);
+    }
+
     DrawText(TextFormat("CURIOSIDADE: %d", carta->curiosidade), x + 25, y + 251, 25, BLUE);
     DrawText(TextFormat("CRIATIVIDADE: %d", carta->criatividade), x + 25, y + 296, 25, DARKGREEN);
     DrawText(TextFormat("INOVAÇÃO: %d", carta->inovacao), x + 25, y + 341, 25, RED);
-    DrawText(TextFormat("IDADE: %d", carta->idade), x + 25, y + 386, 25, PURPLE);
+    DrawText(TextFormat("IDADE: %d", carta->idade), x + 25, y + 386, 25, DARKPURPLE);
 
     DrawText(TextFormat("%s", carta->nome), x + 82, y + 25, 27, BLACK);
     DrawCircle(x + 20 + (MeasureText(carta->hexadecimal, 33) / 2), y + 32, 26, BLACK);
@@ -220,3 +223,90 @@ void telaErro(char txt_erro[255]){
     return;
 }
 
+void desenhaRadioButton(RadioButton botoes[], int quantidade_botoesradio, int grupo_selecionado)
+{    
+
+    for(int i = 0; i < quantidade_botoesradio; i++)
+    {   
+        if (botoes[i].grupo == grupo_selecionado)
+        {
+            DrawCircle(botoes[i].centro.x,botoes[i].centro.y, 1.25 * botoes[i].raio,BLACK);
+            DrawCircle(botoes[i].centro.x,botoes[i].centro.y, botoes[i].raio, botoes[i].cor);
+            DrawText(botoes[i].texto, botoes[i].centro.x + (3*(int)botoes[i].raio), botoes[i].centro.y - (int)botoes[i].raio,2*(int)botoes[i].raio, BLACK);
+            if (botoes[i].estado == true)
+            {
+                DrawCircle(botoes[i].centro.x,botoes[i].centro.y, 0.85*botoes[i].raio, NOSSO_AZUL);
+            }
+        }
+    }
+    return;
+}
+
+void resaltaRadioButton(RadioButton botoes[], int quantidade_botoes, int grupo_selecionado){
+    for(int i = 0; i < quantidade_botoes; i++){
+
+        if (botoes[i].grupo == grupo_selecionado)
+        {
+            if(CheckCollisionPointCircle(posicao_mouse, botoes[i].centro, botoes[i].raio)){
+                botoes[i].cor = NOSSO_CIANO;
+                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+            } else{
+                botoes[i].cor = NOSSO_BEGE;
+            }
+        }
+    }
+    return;
+}
+
+void desenhaTextBox(TextBox *caixa_texto)
+{
+    static int contador_frame = 0;
+
+    if(caixa_texto->habilitado){
+    DrawRectangle(caixa_texto->caixa.x, caixa_texto->caixa.y, caixa_texto->caixa.width, caixa_texto->caixa.height, caixa_texto->cor_caixa);
+        if(caixa_texto->placeholder){
+            DrawText(caixa_texto->texto_placeholder, caixa_texto->caixa.x + 7, ((2 * caixa_texto->caixa.y + caixa_texto->caixa.height - 25) * 0.5), 25, GRAY);
+            if(contador_frame > 90 && caixa_texto->subcaixa){
+            DrawText("|", caixa_texto->caixa.x + 13 + MeasureText(caixa_texto->texto_placeholder, 25), ((2 * caixa_texto->caixa.y + caixa_texto->caixa.height - 25) * 0.5), 25, GRAY);
+            } 
+        } else{
+            DrawText(caixa_texto->texto, caixa_texto->caixa.x + 7, ((2 * caixa_texto->caixa.y + caixa_texto->caixa.height - 25) * 0.5), 25, caixa_texto->cor_texto);
+            if(contador_frame > 90 && caixa_texto->subcaixa){
+            DrawText("|", caixa_texto->caixa.x + 13 + MeasureText(caixa_texto->texto, 25), ((2 * caixa_texto->caixa.y + caixa_texto->caixa.height - 25) * 0.5), 25, caixa_texto->cor_texto);
+            } 
+        } 
+    }
+
+    if(contador_frame > 180){
+        contador_frame = 0;
+    }
+    
+    contador_frame++;
+
+}
+
+void desenhaSeletor(Seletor caixas[], int quantidade_seletor, int grupo_selecionado)
+{    
+
+    for(int i = 0; i < quantidade_seletor; i++)
+    {   
+        if (caixas[i].grupo == grupo_selecionado)
+        {
+            DrawRectangle(caixas[i].quadrado.x-3, caixas[i].quadrado.y-3,6 + caixas[i].quadrado.width, 6 +caixas[i].quadrado.height, BLACK);
+            DrawRectangle(caixas[i].quadrado.x, caixas[i].quadrado.y, caixas[i].quadrado.width, caixas[i].quadrado.height, caixas[i].cor);
+            DrawText(caixas[i].texto, caixas[i].quadrado.x + (2 *(int)caixas[i].quadrado.width), caixas[i].quadrado.y , (int)caixas[i].quadrado.width, BLACK);
+            if (caixas[i].estado == true)
+            {
+                DrawRectangle(caixas[i].quadrado.x + 4, caixas[i].quadrado.y +4, caixas[i].quadrado.width -8, caixas[i].quadrado.height -8, NOSSO_AZUL);
+            }
+            if(CheckCollisionPointRec(posicao_mouse, caixas[i].quadrado)){
+                caixas[i].cor = NOSSO_CIANO;
+                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+            } else{
+                caixas[i].cor = NOSSO_BEGE;
+            }
+        }
+        
+    }
+    return;
+}
