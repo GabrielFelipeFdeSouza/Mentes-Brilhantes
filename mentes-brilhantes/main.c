@@ -1,7 +1,17 @@
 /*ARQUIVO MAIN - INICIALIZAÇÕES DAS DEPENDENCIAS RAYLIB, AUDIO, IMAGENS E ETC,
 MAIS AS DIRETIVAS BASES DE SAIDA E ENTRADA*/
 
-#include "./dependencias.h"
+#include "main.h"
+#include "raylib.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "structs-gerais.h"
+#include "ler-arquivos.h"
+#include "escrever-arquivos.h"
+#include "desenho-geral.h"
+#include "funcoes-controle-geral.h"
+#include "funcoes-menu.h"
+#include "funcoes-deck.h"
 
 // Constantes
 const int COMPRIMENTO_TELA = 1000;
@@ -12,6 +22,8 @@ float scale, scaleX, scaleY;
 bool esta_mudo = true;    // Controle geral de sons
 bool trocar_tela = false; // Controle geral se usuário quer mudar de tela, evitar congelamentos
 
+// TELAS: 0 e 2 - Menu, 1 - Gerenciador, 11 - Erros
+
 // Variáveis globais
 int tela = 0;          // Sinalizador de tela que o usuário se encontra
 int estado_tela = 0;   // Sinalizador de intenção de troca de tela, usado para animações
@@ -19,6 +31,7 @@ Vector2 posicao_mouse; // Posição do mouse
 Vector2 posicao_tela;  // Posição da tela
 int quantidade_cartas = 0;
 Color *cor_aleatoria = NULL; // Usada para a função de super trunfo
+Image icon; //Para uso do icone
 
 int main(void)
 {
@@ -49,7 +62,7 @@ int main(void)
         }
         else
         {
-            //abrePdf(); // Abre o pdf de boas vindas se for a primeira vez - Instruções e regras
+            abrePdf(); // Abre o pdf de boas vindas se for a primeira vez - Instruções e regras
         }
     } // If que verifica se há o arquivo bin de cartas para começar
 
@@ -66,6 +79,8 @@ int main(void)
             SetWindowState(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_UNFOCUSED);             // Seta a tela para rodar, mesmo se não focada, mas se minimizada pelo botão, congela
             RenderTexture2D target = LoadRenderTexture(COMPRIMENTO_TELA, ALTURA_TELA); // Cria a textura de renderização
             SetTargetFPS(60);                                                          // Setando o framerate da raylib para 60
+            icon = LoadImage("./img/icon.png");                                  // Carega a img de icone para usar
+            SetWindowIcon(icon);                                                       // Desenha o icone
             ShowCursor();                                                              // Habilita a raylib para desenhar o cursor do S.O
             InitAudioDevice();                                                         // Inicia o dispositivo padrão de audio
 
@@ -85,7 +100,7 @@ int main(void)
             menu(&target, &musica, sons); // Chama a tela de menu com a textura base de desenho redimensionavel
             break;
 
-        case 1:                                              // GERENCIADOR DE CARTAS
+        case 1:                                               // GERENCIADOR DE CARTAS
             gerenciarCartas(&target, &musica, sons, &cartas); // Chama a tela de gerenciar cartas com a textura base de desenho redimensionavel
             break;
 
@@ -99,13 +114,14 @@ int main(void)
     } while (tela < 8); // Checa se a tela é invalida ou se o usuário a fechou
 
     CloseWindow();
+    UnloadImage(icon);
     printf("\nSAINDO DO GAME...\n");
     salvarDados("./data/cartas.bin", cartas); // Salva os dados no arq.bin antes de sair
     free(cartas);
     free(cor_aleatoria); // Libera a memoria das cores
     CloseAudioDevice();
-    printf("\nSaiu na tela: %d | Estado de tela estava em: %d\n", tela, estado_tela); // Depuração
-    printf("\nQuantidade de cartas salvas: %d, tamanho do arquivo binario em bytes: %lld\n\n", quantidade_cartas, sizeof(Carta) * quantidade_cartas); // Depuração
+    printf("\nSaiu na tela: %d | Estado de tela estava em: %d\n", tela, estado_tela);                                                                    // Depuração
+    printf("\nQuantidade de cartas salvas: %d, tamanho do arquivo binario em bytes: %d\n\n", quantidade_cartas, (int)sizeof(Carta) * quantidade_cartas); // Depuração
     return 0;
 }
 
