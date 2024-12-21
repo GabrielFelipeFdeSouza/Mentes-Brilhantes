@@ -4,6 +4,10 @@
 #### Professor Orientador: Muriel de Souza Godoi  
 #### Universidade Tecnológica Federal do Paraná (UTFPR) - Campus Apucarana  
 
+# 🧰 **AVISO**  
+
+### Por conta da incompatibilidade da raylib, problemas podem surgir no linux, para mais detalhes olhar o arquivo details.md*  
+
 ---
 
 ## 👨‍🎓 **Alunos:**  
