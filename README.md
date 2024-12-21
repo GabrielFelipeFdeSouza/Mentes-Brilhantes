@@ -6,7 +6,7 @@
 
 # 🧰 **AVISO**  
 
-### Por conta da incompatibilidade da raylib, problemas podem surgir no linux, para mais detalhes olhar o arquivo details.md*  
+### Por conta da incompatibilidade da raylib, problemas podem surgir no linux, para mais detalhes olhar o arquivo *details.md*  
 
 ---
 
