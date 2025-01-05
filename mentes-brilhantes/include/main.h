@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include "raylib.h"
+#include "structs-gerais.h"
 
 // Constantes
 extern const int COMPRIMENTO_TELA;
@@ -18,6 +19,8 @@ extern bool esta_mudo; //Controle geral de sons
 extern bool trocar_tela; //Controle geral se usuário quer mudar de tela, evitar congelamentos
 extern int quantidade_cartas; //Inteiro que salva a quantidade total de cartas na abertura dos arquivos
 extern Color *cor_aleatoria; //Usada nas cores aleatorias do game
+extern Carta *cartas; // Cria o ponteiro do vetor de cartas para uso no singlePlayer e gerenciador
+extern int botoes_resaltar; // Variavel usada para incicar para as funções de desenho, quantos botões precisam ser resaltados
 
 // Funções
 Texture2D ResizeTexture(Texture2D texture, int newWidth, int newHeight);

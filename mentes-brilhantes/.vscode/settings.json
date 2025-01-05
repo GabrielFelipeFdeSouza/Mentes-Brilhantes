@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "desenho-gerenciador-cartas.h": "c",
+        "main.h": "c",
+        "funcoes-menu.h": "c",
+        "raylib.h": "c",
+        "string.h": "c",
+        "structs-gerais.h": "c"
+    }
+}

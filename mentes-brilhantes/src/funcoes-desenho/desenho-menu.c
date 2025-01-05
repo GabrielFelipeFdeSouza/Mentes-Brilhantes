@@ -24,6 +24,15 @@ void desenhoMenu(RenderTexture2D *target, Botao botoes[], int quantidade_botoes,
     desenharBotaoTxt(botoes[t]);
     } //Desenha todos os botões
 
+    for(int y = 0; y < quantidade_botoes; y++){
+        if(CheckCollisionPointRec(posicao_mouse, botoes[y].colisao)){
+            break;
+        }
+        if(y == quantidade_botoes-1){
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        }
+    } //For que arruma o tipo de cursor nos botoes normais
+
 
     DrawText(TextFormat("Posição do mouse: (%.2f,%.2f) - FPS: %d", posicao_mouse.x, posicao_mouse.y, GetFPS()), 1, 1, 20, RED);
     desenharBotaoNulo(botao); //Desenha os botões nulos, nesse caso o da imagem de som

@@ -24,7 +24,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
     DrawRectangleLinesEx((Rectangle){0, 275, 311, 325}, 3, BLACK); // Desenha um retangulo preto vazado para controles
 
     DrawTexture(seta, 910, 255, WHITE);                                 // Desenha a seta da direita
-    DrawTextureEx(seta, (Vector2){400, 255 + 72}, 180.0f, 1.0f, WHITE); // Desenha a seta da esquerda (13)
+    DrawTextureEx(seta, (Vector2){400, 255 + 72}, 180.0f, 1.0f, WHITE); // Desenha a seta da esquerda 
 
     desenhaCarta(500, 100, &frente_carta, &carta, img_carta); // Chama a função para desenhar a carta na posição x,y
 
@@ -77,8 +77,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
         } else{
             desenharBotaoTxt(botoes[t]);
         }
-
-        
+                
     } // Desenha todos os botões - Nulos e normais
 
     if(retornos_funcoes[0])
@@ -137,6 +136,15 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
 
 
     DrawText(TextFormat("Posição do mouse: (%.2f,%.2f)", posicao_mouse.x, posicao_mouse.y), 450, 570, 20, BLUE);
+
+    if (botoes_resaltar > 0)
+        {
+            SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        }
+        else
+        {
+            SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        }
 
     EndTextureMode();
 

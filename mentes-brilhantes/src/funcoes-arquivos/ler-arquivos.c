@@ -22,7 +22,7 @@ os comandos da main.
 //---------------------------------
 
 //Função que abre o arquivo csv e le até o seu fim redimensionando o vetor cartas e salvando as cartas lidas nele, ele retorna o numero de cartas lidas:
-int carregarDadosCSV(const char *nomeArquivo, Carta **cartas)
+int carregarDadosCSV(const char *nomeArquivo)
 {
     printf("\nLendo do arquivo CSV!\n");
 
@@ -41,13 +41,13 @@ int carregarDadosCSV(const char *nomeArquivo, Carta **cartas)
     } //Verifica se o arquivo existe e abre-o
 
     //Alocação:
-    *cartas = (Carta *)malloc(capacidade * sizeof(Carta));
-    if (*cartas == NULL)
+    cartas = (Carta *)malloc(capacidade * sizeof(Carta));
+    if (cartas == NULL)
     {
         perror("Erro ao alocar memória");
         fclose(arquivo);
         return 0;
-    } //Aloca o vetor de cartas inicialmente para 32 - se houver mais o realoc trata
+    } //Aloca o vetor de cartas inicialmente para 64 - se houver mais o realoc trata
 
     //Le cada linha do arquivo:
     while (fgets(linha, max_linhas, arquivo))
@@ -55,8 +55,8 @@ int carregarDadosCSV(const char *nomeArquivo, Carta **cartas)
         if (tamanho >= capacidade)
         {
             capacidade  = 2; //Aumenta a capacidade para +2 e realoca
-            *cartas = (Carta *)realloc(*cartas, capacidade * sizeof(Carta));
-            if (*cartas == NULL)
+            cartas = (Carta *)realloc(cartas, capacidade * sizeof(Carta));
+            if (cartas == NULL)
             {
                 perror("Erro ao realocar memória");
                 fclose(arquivo);
@@ -70,7 +70,7 @@ int carregarDadosCSV(const char *nomeArquivo, Carta **cartas)
         
         c.super_trunfo = (strcmp(super_trunfo, "true") == 0); //Verifica se é supertrunfo e manda para p
 
-        (*cartas)[tamanho++] = c; //Cartas na posição do tamnho atual recebe o c
+        cartas[tamanho++] = c; //Cartas na posição do tamnho atual recebe o c
     } //Percorre todo o arquivo
 
     fclose(arquivo); //Fecha o arquivo
@@ -110,7 +110,7 @@ bool verificaOuCriaArquivoBinario(const char *nomeArquivo)
 } //Fim verificaOuCriaArquivoBinario
 
 //Função de leitura do arquivo BIN, retornando o tamanho do vetor de structs cartas alocado:
-int carregarDadosBIN(const char *nomeArquivo, Carta **cartas)
+int carregarDadosBIN(const char *nomeArquivo)
 {
     printf("\nLendo do arquivo BIN!\n");
 
@@ -126,10 +126,10 @@ int carregarDadosBIN(const char *nomeArquivo, Carta **cartas)
     fread(&quantidade, sizeof(int), 1, arquivo); //Le a quantidade de cartas que tem no arquivo, essa info é a primeira do arquivo
 
     //Aloca memória para o vetor de cartas:
-    *cartas = (Carta *)malloc(quantidade * sizeof(Carta));
+    cartas = (Carta *)malloc(quantidade * sizeof(Carta));
 
     //Le todo o contudo do arquivo:
-    if((int) fread(*cartas, sizeof(Carta), quantidade, arquivo) != quantidade)
+    if((int) fread(cartas, sizeof(Carta), quantidade, arquivo) != quantidade)
     {
         perror("Erro ao ler arquivo bin");
         fclose(arquivo); //Fecha o arquivo

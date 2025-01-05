@@ -1,0 +1,1 @@
+// Arquivo para funções auxilaires do em-jogo

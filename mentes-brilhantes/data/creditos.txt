@@ -1,0 +1,12 @@
+	      MENTES BRILHANTES
+
+
+Jogo desenvolvido como requesito para matéria de 
+fundamentos de programação do professor Muriel
+Godói da UTFPR/AP.
+
+AUTORES
+
+> Gabriel Felipe Ferdinandi de Souza;
+> Gustavo Ferreira da Fonseca;
+> Thiago André Mattos Malagá;

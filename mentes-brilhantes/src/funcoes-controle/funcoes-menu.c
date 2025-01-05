@@ -54,7 +54,6 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
         leMouse(); // Chama a função global de leitura de mouse
         desenhoMenu(target, botoes_menu, 5, *botao_menu_som, img_btn_som, fundo); // Chama a função de desenho objetos do menu
         controleSons(0, *musica, sons[0]); // Função de controle geral sons - mantem musica tocando
-        resaltaBotoes(botoes_menu, 5, *musica, sons[0], &botao_menu_som, 1); //Função que checa se o usuário esta sob um btn
 
         // CHECAGEM DE CLIQUE DOS BOTÕES:
 
@@ -80,6 +79,14 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
             trocar_tela = true;
         } //Sair
 
+        if (checarClique(&botoes_menu[1].colisao) && estado_tela != 4)
+        {
+            estado_tela = 4;
+            controleSons(1, *musica, sons[1]); // Função de controle geral sons - tocar som clicou
+            botoes_menu[1].cor_botao = GREEN;
+            trocar_tela = true;
+        } //Creditos
+
         if (checarClique(&botoes_menu[2].colisao) && estado_tela != 1)
         {
             estado_tela = 1;
@@ -87,6 +94,14 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
             botoes_menu[2].cor_botao = GREEN;
             trocar_tela = true;
         } //Gerenciador Cartas
+
+        if (checarClique(&botoes_menu[3].colisao) && estado_tela != 3)
+        {
+            estado_tela = 3;
+            controleSons(1, *musica, sons[1]); // Função de controle geral sons - tocar som clicou
+            botoes_menu[3].cor_botao = GREEN;
+            trocar_tela = true;
+        } //Singleplayer
 
         // CONTROLE DAS TELAS:
 
@@ -103,6 +118,34 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
                 UnloadTexture(img_btn_som);
                 tela = 1;
             } // Espera tocar para sair se o usuário deseja sair
+            break;
+
+        case 3:
+            if (!IsSoundPlaying(sons[1]) && trocar_tela == true)
+                {
+                    trocar_tela = false;
+                    UnloadTexture(btn_c_som);
+                    UnloadTexture(btn_s_som);
+                    UnloadTexture(btn_c_som_cru);
+                    UnloadTexture(btn_s_som_cru);
+                    UnloadTexture(img_btn_som);
+                    tela = 3;
+                } // Espera tocar para sair se o usuário deseja sair
+
+            break;
+
+        case 4:
+            if (!IsSoundPlaying(sons[1]) && trocar_tela == true)
+                {
+                    trocar_tela = false;
+                    UnloadTexture(btn_c_som);
+                    UnloadTexture(btn_s_som);
+                    UnloadTexture(btn_c_som_cru);
+                    UnloadTexture(btn_s_som_cru);
+                    UnloadTexture(img_btn_som);
+                    tela = 4;
+                } // Espera tocar para sair se o usuário deseja sair
+
             break;
 
         case 7:

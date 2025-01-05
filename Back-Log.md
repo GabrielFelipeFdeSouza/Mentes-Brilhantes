@@ -239,3 +239,60 @@ trechos no pesquisando.;
 Passamos esses ultimos momentos, otimizando, organizando e tentando corrigir todos os problemas.
 Erros ainda permanecem no realoc do adicionar cartas. *Todos os problemas serão sanados o quanto*
 *antes para o iniciar as outras partes*.;
+
+
+**21/12/24 - 16:40 - 19:00- Gabriel:**
+Arrumei o erro ao adicionar as cartas, agora está ok, as funções foram um pouco modificadas
+pois, agora a cartas virou variavel global.; *Falta comentar e identar o codex o quanto antes*.;
+
+
+**21/12/24 - 20:00 - 22:40 - Thiago:**
+Fiz o começo do menu do singlepayer.;
+
+
+**24/12/24 - 09:00 - 10:28 - Gabriel:**
+Avancei mais na identação / descrição do código, explicando os detalhes no arquivo details.md,
+além de dar uma reoganizada geral e comentários no código, ainda juntei o ressalta botões na
+funcao que desenha eles, faltando fazer isso para os invisieis/nulos.; 
+
+
+**25/12/24 - 19:30 - 20:49 - Gabriel:**
+Coloquei a textura da mesa na tela de jogo e alterei o modo que os botoes sao resaltados,
+a parte de cor é feito no desenho geral e o mouse é feito no controle de funções de cada uma,
+faltando colocar isso agora nas demais telas.;
+
+
+**27/12/24 - 20:05 - 21:00 - Gabriel:**
+Recomeçei sem sucesso a tentar arrumar o resaltar, para ficar 100%, também preparei a base
+para o desenho dos submenus do em jogo bot, colocando já a primeira parte do seletor de 
+dificuladade.;
+
+
+**31/12/24 - 15:30 - 17:20 - Gabriel:**
+Coloquei o inicio do sistema para gerenciar as cartas do jogador e do bot no menu de 
+jogo singlepayer, ele randomiza as cartas e distribui entre esses dois.;
+
+
+**01/01/25 - 21:00 - 22:32 - Gabriel:**
+Começei a deixar o terreno preparado para as funções que governaram o menu de jogo singlepayer,
+nessa tela ja coloquei o cronometro e a carta do desenhada do jogador, ficando para depois
+*desenhar a textura de fundo de carta e começar a fazer as funções de controle de fato*.;
+
+
+**02/01/25 - 14:40 - 16:12 - Gabriel:**
+Coloquei algumas funções no arquivo of hogo singlepayer para usar posteriormente, e juntocoloquei 
+as váriaveis que usará, aos poucos o objetivo é construir a lógica de controle.;
+
+
+**03/01/25 - DIA TODO - Gabriel:**
+Fiz o submenu do creditos, para mais detalhes olhar nos details.md, também começei
+a fazer as funções do jogo single player, já esta pronto as interações do jogador,
+e suas atualizações sobre os baralhos, falta fazer a ia do bot, funções de empate
+e do supertrunfo.;
+
+
+**04/01/25 - 08:32 - 09:56 - Gabriel:**
+Fiz a IA do bot, com escolhas possiveis dele seguir, aleatorizando entre-si,
+ainda fiz o sistema que checa a vitoria numa rodada para os jogador e bot
+seguindo a regra do supertrunfo e também fiz o checavitoria que verifica quem ganhou
+no fim, *Ficando para tras colcar os efeitos de mouse nesses menus e tmabem o empate*.;

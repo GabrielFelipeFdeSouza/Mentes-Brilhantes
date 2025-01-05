@@ -1,4 +1,13 @@
-// FUNÇÕES PARA A TELA DE MENU - SEM SER PARTE DE DESENHO
+/*
+-->FUNÇÕES DECK<--
+Aqui é que o deck é totalmente controlado, desde as funções auxiliares dele
+até seu desenho especifico, entre outros detalhes, esse é o coração do
+gerenciador de cartas.
+*/
+
+//---------------------------------
+// INCLUDES
+//---------------------------------
 
 #include "main.h"
 #include "raylib.h"
@@ -20,16 +29,18 @@
 #include <stdbool.h>
 
 // Função de declaração do menu:
-void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta **cartas)
+void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[])
 {
 
-    // Variaveis:
-    int total_cartas;     // Usada para passar a quantidade de cartas e posicionador correto
-    int submenu_tela = 5; // Variavel do submenus do gerenciador
-    int carta_atual = 1;  // Variavel que representa a carta atual do jogador
-    Carta carta;          // Struct da carta que sera desenhada para o usuario
-    Carta *cartas_desenho = NULL;
-    int id_anterior = -1;
+    //---------------------------------
+    // VARIAVEIS LOCAIS
+    //---------------------------------
+    int total_cartas;                      // Usada para passar a quantidade de cartas e posicionador correto
+    int submenu_tela = 5;                  // Variavel do submenus do gerenciador - inicio no listar
+    int carta_atual = 1;                   // Variavel que representa a carta atual do jogador
+    Carta carta;                           // Struct da carta que sera desenhada para o usuario
+    Carta *cartas_desenho = NULL;          // Vetor de cartas a serem desenhadas
+    int id_anterior = -1;                  // Id usado para selecionar a cartas pelas setas
     int exportou;                          // Usado para export das cartas no csv [0 - Não solicitado, 1 - exportado corretamente, 2 - erro]
     int contador_frames[4] = {0, 0, 0, 0}; // Usado para dar os avisos e eventos ao usuário e animações
     int retornos_funcoes[3] = {0, 0, 0};   // Usado no processamento do retorno das funções
@@ -50,12 +61,14 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
     botoes_gerenciador[8].colisao = criarBotao(&botoes_gerenciador[8], 100, 545, NOSSO_AZUL, "EDITAR", 23, NOSSO_CINZA);
     botoes_gerenciador[9].colisao = criarBotao(&botoes_gerenciador[9], 78, 545, NOSSO_AZUL, "PESQUISAR", 23, NOSSO_CINZA);
 
+    // Definindo os botões invisiveis do gerenciador (Setas):
     BotaoNulo botoes_nulos_gerenciador[2]; // Declara os botões invisiveis do gerenciado
     botoes_nulos_gerenciador[0].colisao = (Rectangle){913, 263, 67, 56};
     botoes_nulos_gerenciador[0].cor_botao = NOSSO_AZUL;
     botoes_nulos_gerenciador[1].colisao = (Rectangle){329, 263, 67, 56};
     botoes_nulos_gerenciador[1].cor_botao = NOSSO_AZUL;
 
+    // Definindo os botoes de radio usado nos submenus do gerenciado:
     RadioButton botoes_radio[6];
     botoes_radio[0] = (RadioButton){0, "Nome", {25, 338}, 10, NOSSO_BEGE, true, 1};
     botoes_radio[1] = (RadioButton){1, "Curiosidade", {25, 368}, 10, NOSSO_BEGE, false, 1};
@@ -64,9 +77,11 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
     botoes_radio[4] = (RadioButton){4, "Idade", {25, 458}, 10, NOSSO_BEGE, false, 1};
     botoes_radio[5] = (RadioButton){5, "Numero e letra", {25, 488}, 10, NOSSO_BEGE, false, 1};
 
+    // Definindo a caixa de super-trunfo que é usada nos submenus do gerenciador:
     Seletor caixa;
     caixa = (Seletor){0, "Super Trunfo", {15, 510, 20, 20}, NOSSO_BEGE, false, 1};
 
+    // Definindo as caixas de texto usadas para os campos de entrada do gerenciador:
     TextBox caixa_texto[6];
     caixa_texto[0] = (TextBox){{8, 283, 292, 37}, NOSSO_CREME, "", "Nome:", NOSSO_AZUL, true, true, 0, 0, 1};
     caixa_texto[1] = (TextBox){{8, 283, 292, 37}, NOSSO_CREME, "", "Curiosidade:", NOSSO_AZUL, true, true, 0, 2, 1};
@@ -75,6 +90,7 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
     caixa_texto[4] = (TextBox){{8, 283, 292, 37}, NOSSO_CREME, "", "Idade:", NOSSO_AZUL, true, true, 0, 2, 1};
     caixa_texto[5] = (TextBox){{8, 283, 292, 37}, NOSSO_CREME, "", "Numero e letra:", NOSSO_AZUL, true, true, 0, 0, 1};
 
+    // Definindo as caixas de texto usada na pesquisa do gerenciador:
     TextBox caixa_texto_pesquisar[5];
     caixa_texto_pesquisar[0] = (TextBox){{8, 283, 292, 37}, NOSSO_CREME, "", "Nome:", NOSSO_AZUL, true, true, 0, 0, 1};
     caixa_texto_pesquisar[1] = (TextBox){{8, 283, 130, 37}, NOSSO_CREME, "", "Inicial:", NOSSO_AZUL, true, true, 0, 2, 1};
@@ -83,77 +99,164 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
     caixa_texto_pesquisar[4] = (TextBox){{175, 283, 130, 37}, NOSSO_CREME, "", "Letra:", NOSSO_AZUL, true, true, 0, 0, 0};
 
     // Carregando as imagens:
-    Texture2D fundo = LoadTexture("img/fundo-gerenciador.png"); // Carrega a imagem btn com som
-    Texture2D setass = LoadTexture("img/seta.png");             // Carega a img da seta
-    Texture2D seta = ResizeTexture(setass, 72, 72);             // Redimensiona a seta
-    Texture2D frente_carta = LoadTexture("img/frente_carta.png");
+    Texture2D fundo = LoadTexture("img/fundo-gerenciador.png");   // Carrega a imagem do fundo desse menu
+    Texture2D setass = LoadTexture("img/seta.png");               // Carega a img da seta
+    Texture2D seta = ResizeTexture(setass, 72, 72);               // Redimensiona a seta
+    Texture2D frente_carta = LoadTexture("img/frente_carta.png"); // Carrega a imagem do frame frontal da carta
 
-    // Condição de tela:
+    cartas_desenho = cartas; // Por padrão as cartas a serem desenhadas começam sendo o vetor de cartas global
+
+    //---------------------------------
+    // LOOP GERAL
+    //---------------------------------
+
     while (tela == 1)
     {
+        //---------------------------------
+        // CONTROLES GERAIS
+        //---------------------------------
 
         // ESCALA DA TELA:
         scaleX = (float)GetScreenWidth() / COMPRIMENTO_TELA;
         scaleY = (float)GetScreenHeight() / ALTURA_TELA;
         scale = (scaleX < scaleY) ? scaleX : scaleY;
 
-        // CONTROLES GERAIS:
-        checarSaida();                                                                                                                                                                                                                     // Chama a função que verifica se o usuário saiu
-        checarTelaCheia();                                                                                                                                                                                                                 // Chama função que verifica as condições de tela cheia
-        leMouse();                                                                                                                                                                                                                         // Chama a função global de leitura de mouse
+        // FUNÇOES AUXILIARES GERAIS:
+        checarSaida();                                                                                                                                                                                                                     // Verifica a saida do usuario do programa
+        checarTelaCheia();                                                                                                                                                                                                                 // Verifica se o usuario deu togle em telacheia
+        leMouse();                                                                                                                                                                                                                         // Função que le as cordenadas da posição atual do mouse
         desenhoGerenciador(target, botoes_gerenciador, 9, fundo, submenu_tela, seta, frente_carta, carta_atual, total_cartas, carta, &img_carta, exportou, retornos_funcoes, botoes_radio, 6, caixa_texto, &caixa, caixa_texto_pesquisar); // Chama a função de desenho objetos do gerenciador
-        controleSons(0, *musica, sons[0]);                                                                                                                                                                                                 // Função de controle geral sons - mantem musica tocando                                                                                                                                         // Função que checa se o usuário esta sob um btn
+        controleSons(0, *musica, sons[0]);
 
-        // CONTROLE DOS RESALTA BOTOES:
-                if (submenu_tela == 1 || submenu_tela == 3 || submenu_tela == 4)
+        //---------------------------------
+        // CONTROLES RESALTA BOTOES
+        //---------------------------------
+
+        botoes_resaltar = 0; // Zerando para reuso
+
+        for (int s = 0; s < 7; s++)
         {
-            if (submenu_tela == 1)
+            if (CheckCollisionPointRec(posicao_mouse, botoes_gerenciador[s].colisao) && !coresIguais(botoes_gerenciador[s].cor_botao, GREEN))
             {
-                resaltaBotoes(botoes_gerenciador, 7, *musica, sons[0], botoes_nulos_gerenciador, 2);
-                resaltaBotoes(&botoes_gerenciador[7], 1, *musica, sons[0]);
+                botoes_resaltar = 1;
+                break;
             }
+            else if (!coresIguais(botoes_gerenciador[s].cor_botao, GREEN))
+            {
+                botoes_resaltar = 0;
+            }
+        } // Percorre os botoes com texto para resaltar
 
+        while (1)
+        {
             if (submenu_tela == 3)
             {
-                resaltaBotoes(botoes_gerenciador, 7, *musica, sons[0], botoes_nulos_gerenciador, 2);
-                resaltaBotoes(&botoes_gerenciador[8], 1, *musica, sons[0]);
+                if (botoes_resaltar == 1)
+                {
+                    break;
+                }
+                if (CheckCollisionPointRec(posicao_mouse, botoes_gerenciador[8].colisao) && !coresIguais(botoes_gerenciador[8].cor_botao, GREEN))
+                {
+                    botoes_resaltar = 1;
+                }
+                else if (!coresIguais(botoes_gerenciador[8].cor_botao, GREEN))
+                {
+                    botoes_resaltar = 0;
+                }
             }
+
+            if (submenu_tela == 1)
+            {
+                if (botoes_resaltar == 1)
+                {
+                    break;
+                }
+                if (CheckCollisionPointRec(posicao_mouse, botoes_gerenciador[7].colisao) && !coresIguais(botoes_gerenciador[7].cor_botao, GREEN))
+                {
+                    botoes_resaltar = 1;
+                }
+                else if (!coresIguais(botoes_gerenciador[7].cor_botao, GREEN))
+                {
+                    botoes_resaltar = 0;
+                }
+            }
+
             if (submenu_tela == 4)
             {
-                resaltaBotoes(botoes_gerenciador, 7, *musica, sons[0], botoes_nulos_gerenciador, 2);
-                resaltaBotoes(&botoes_gerenciador[9], 1, *musica, sons[0]);
+                if (botoes_resaltar == 1)
+                {
+                    break;
+                }
+                if (CheckCollisionPointRec(posicao_mouse, botoes_gerenciador[9].colisao) && !coresIguais(botoes_gerenciador[9].cor_botao, GREEN))
+                {
+                    botoes_resaltar = 1;
+                }
+                else if (!coresIguais(botoes_gerenciador[9].cor_botao, GREEN))
+                {
+                    botoes_resaltar = 0;
+                }
             }
+            break;
         }
 
-        //---------------------------------------------------
-        // CONTROLE DAS CARTAS:
-        //---------------------------------------------------
+        for (int v = 0; v < 2; v++)
+        {
+            if (botoes_resaltar == 1)
+            {
+                break;
+            }
 
+            if (CheckCollisionPointRec(posicao_mouse, botoes_nulos_gerenciador[v].colisao))
+            {
+                botoes_resaltar = 1;
+                break;
+            }
+            else if (!coresIguais(botoes_nulos_gerenciador[v].cor_botao, GREEN))
+            {
+                botoes_resaltar = 0;
+            }
+        } // Percorre os botoes sem texto para resaltar
+
+        //---------------------------------
+        // CONTROLES DAS CARTAS DESENHADAS
+        //---------------------------------
+
+        // CASO ONDE É O PESQUISAR:
+        if (submenu_tela == 4)
+        {
+            carta = cartas_desenho[carta_atual - 1]; // Copia os dados da carta que será desenhada
+
+            if (id_anterior != cartas_desenho[carta_atual - 1].id || exclusor)
+            {
+                exclusor = false;
+                id_anterior = cartas_desenho[carta_atual - 1].id;
+                UnloadTexture(img_carta);
+                img_carta = LoadTexture(cartas_desenho[carta_atual - 1].imagem);
+            } // Usado para carregar a textura de uma carta apenas na troca de carta / exclusão da atual
+        }
+
+        // CASO ONDE NÃO É O PESQUISAR:
         if (submenu_tela != 4)
         {
-            total_cartas = quantidade_cartas;
-            cartas_desenho = realloc(cartas_desenho, quantidade_cartas * sizeof(Carta));
-            cartas_desenho = *cartas;
-        } // Em caso de o submenu não for o pesquisar, o total de cartas é o total global e o vetor desenhavel recebe do cartas direto
+            total_cartas = quantidade_cartas; // O total de cartas é a quantidade global
 
-        carta = cartas_desenho[carta_atual - 1]; // Copia os dados da carta que será desenhada
+            carta = cartas[carta_atual - 1]; // Copia os dados da carta que será desenhada
 
-        if (id_anterior != cartas_desenho[carta_atual - 1].id || exclusor)
-        {
-            exclusor = false;
-            id_anterior = cartas_desenho[carta_atual - 1].id;
-            UnloadTexture(img_carta);
-            img_carta = LoadTexture(cartas_desenho[carta_atual - 1].imagem);
+            if (id_anterior != cartas[carta_atual - 1].id || exclusor)
+            {
+                exclusor = false;
+                id_anterior = cartas[carta_atual - 1].id;
+                UnloadTexture(img_carta);
+                img_carta = LoadTexture(cartas[carta_atual - 1].imagem);
+            } // Usado para carregar a textura de uma carta apenas na troca de carta / exclusão da atual
+            cartas_desenho = cartas; // As cartas a serem desenhadas recebe o vetor cartas global
         }
 
-        //---------------------------------------------------
-        // CONTROLE DOS BOTOES:
-        //---------------------------------------------------
+        //---------------------------------
+        // CONTROLES DOS SUBMENUS
+        //---------------------------------
 
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        // CONTROEL DAS CAIXAS DE TEXTO:
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
+        // PESQUISAR:
         if (submenu_tela == 4)
         {
             for (int u = 0; u < 5; u++)
@@ -177,7 +280,7 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
                 caixa_texto_pesquisar[0].habilitado = true;
 
                 leTeclado(&caixa_texto_pesquisar[0].texto, &caixa_texto_pesquisar[0].tamanho, caixa_texto_pesquisar[0].subgrupo, 20); // Chama a funçaõ que le caracteres do teclado
-            }
+            } // Habilita a leitura do teclado para a caixa de texto do pesquisar
 
             for (int k = 1; k < 5; k++)
             {
@@ -210,7 +313,7 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
                         leTeclado(&caixa_texto_pesquisar[2].texto, &caixa_texto_pesquisar[2].tamanho, caixa_texto_pesquisar[2].subgrupo, 8); // Chama a funçaõ que le caracteres do teclado
                     }
                 }
-            }
+            } // Habilita a leitura das caixas com range de cada uma das variaveis numéricas, baseado em qual esta ativa pelo subcaixa
 
             if (botoes_radio[5].estado)
             {
@@ -239,20 +342,18 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
                 if (caixa_texto_pesquisar[4].subcaixa)
                 {
                     leTeclado(&caixa_texto_pesquisar[4].texto, &caixa_texto_pesquisar[4].tamanho, caixa_texto_pesquisar[4].subgrupo, 8); // Chama a funçaõ que le caracteres do teclado
-                }
-            }
-            // Faz a ativação da caixa de txt correspondente ao botão de radio ativado
+                } // Habilita a leitura do teclado para as caixas de texto do hexadecimal seguindo a mesma logica do de cima
+            } // Habilita as caixas de texto
 
             if (checarClique(&botoes_gerenciador[9].colisao) && estado_tela != 2)
             {
-                total_cartas = pesquisarCarta(*cartas, caixa_texto_pesquisar, caixa.estado, botoes_radio, &cartas_desenho); // Chama a função que copia os parametros para o vetor
-                carta_atual = 1;
+                total_cartas = pesquisarCarta(caixa_texto_pesquisar, caixa.estado, botoes_radio, &cartas_desenho); // Chama a função que copia os parametros para o vetor
+                carta_atual = 1;                                                                                   // Seta a carta atual para 1 para voltar a primeira posição da exibição das cartas
 
                 if (total_cartas == -1)
                 {
-                    //free(cartas_desenho);
                     submenu_tela = 5;
-                }
+                } // Se o retorno do pesquisar for -1 chama a listagem de cartas
 
                 if (total_cartas == 0)
                 {
@@ -272,17 +373,19 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
                 if (caixa.estado)
                 {
                     caixa.estado = false;
-                }
+                } // Limpa o campo super-trunfo pós o uso
 
                 for (int s = 0; s < 5; s++)
                 {
                     strcpy(caixa_texto_pesquisar[s].texto, "");
                     caixa_texto_pesquisar[s].tamanho = 0;
-                }
-            } // Se clicar em adicionar, enquanto estiver no menu editar, processa
+                } // Limpa as caixas de texto do pesquisar
 
-        } // SUBMENU PESQUISAR
+            } // Se clicar em adicionar, enquanto estiver no menu editar, processa as informações
 
+        } // FIM SUBMENU PESQUISAR
+
+        // EDITAR:
         if (submenu_tela == 3)
         {
 
@@ -317,19 +420,18 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
 
             if (checarClique(&botoes_gerenciador[8].colisao) && estado_tela != 2)
             {
-                retornos_funcoes[2] = editarCarta(cartas, caixa_texto, carta_atual - 1, caixa.estado); // Chama a função que copia os parametros para o vetor
+                retornos_funcoes[2] = editarCarta(caixa_texto, carta_atual - 1, caixa.estado); // Chama a função que copia os parametros para o vetor
                 if (caixa.estado)
                 {
                     caixa.estado = false;
-                }
+                } // Limpa a caixa de super-trunfo após o uso
 
                 if (retornos_funcoes[2] == 0)
                 {
                     submenu_tela = 5;
-                }
-            } // Se clicar em adicionar, enquanto estiver no menu editar, processa
-
-        } // SUBMENU EDITAR
+                } // Se a funçaõ processar ok, chama o listar
+            } // Se clicar em adicionar, enquanto estiver no menu editar, processa as informações no editar
+        }
 
         if (retornos_funcoes[2] == 1 || retornos_funcoes[2] == 2 || retornos_funcoes[2] == 3)
         {
@@ -344,7 +446,9 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
                 contador_frames[3]++;
             } // Dara o aviso de erro de adicionar ao usuário por 185 Frames
         } // Trata o retorno do editar se campos forem vazios - EDITAR
+        // FIM SUBMENU EDITAR
 
+        // ADICIONAR:
         if (submenu_tela == 1)
         {
 
@@ -379,21 +483,20 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
 
             if (checarClique(&botoes_gerenciador[7].colisao) && estado_tela != 2)
             {
-                cartas_desenho= (Carta *)realloc(cartas_desenho, (quantidade_cartas + 1) * sizeof(Carta)); // Aumenta o tamanho do vetor de cartas
-                retornos_funcoes[1] = adicionarCarta(cartas, caixa_texto, caixa.estado);      // Chama a função que copia os parametros para o vetor
+                cartas = (Carta *)realloc(cartas, (quantidade_cartas + 1) * sizeof(Carta));
+                retornos_funcoes[1] = adicionarCarta(caixa_texto, caixa.estado); // Chama a função que copia os parametros para o vetor
                 if (caixa.estado)
                 {
                     caixa.estado = false;
-                } // Desabilita a caixa que é supertrunfo
+                } // Desabilita a caixa que é supertrunfo após uso
 
                 if (retornos_funcoes[1] == 0)
                 {
                     submenu_tela = 5;
-                } // Se ocorrer tudo ok zera o adicionar
+                } // Se ocorrer tudo ok, chama o adicionar
 
             } // Se clicar em adicionar, enquanto estiver no menu adicionar, processa
-
-        } // SUBMENU ADICIONAR
+        }
 
         if (retornos_funcoes[1] == 1 || retornos_funcoes[1] == 2 || retornos_funcoes[1] == 3)
         {
@@ -408,20 +511,21 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
                 contador_frames[2]++;
             } // Dara o aviso de erro de adicionar ao usuário por 185 Frames
         } // Trata o retorno do adicionar se campos forem vazios - ADICIONAR
+        // FIM SUBMENU ADICIONAR
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        // CONTROEL DOS BOTOES GERAIS:
+        // CONTROLE DOS BOTOES GERAIS:
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         if (checarClique(&botoes_nulos_gerenciador[0].colisao) && estado_tela != 2)
         {
             carta_atual++;
-        } // Clique btn direito
+        } // Clique seta direita
 
         if (checarClique(&botoes_nulos_gerenciador[1].colisao) && estado_tela != 2)
         {
             carta_atual--;
-        } // Clique btn esquerdo
+        } // Clique seta esquerda
 
         if (carta_atual > total_cartas)
         {
@@ -434,6 +538,7 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
         } // Se menor que 1 volta para a ultima
 
         // CHECAGEM DE CLIQUE DOS BOTÕES:
+
         if (checarClique(&botoes_gerenciador[0].colisao) && estado_tela != 2)
         {
             estado_tela = 2;
@@ -507,9 +612,9 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
             botoes_gerenciador[2].cor_botao = GREEN;
             if (quantidade_cartas > 1)
             {
-                excluirCarta(carta_atual - 1, cartas);
-                quantidade_cartas--;
-                exclusor = true;
+                excluirCarta(carta_atual - 1); // Chama a funçaõ de excluir cartas para o id da carta atual
+                quantidade_cartas--;           // Reduz o tamanho das cartas globais
+                exclusor = true;               // Seta o exclusor, que é usado no pós processamento das funções
             }
             else
             {
@@ -531,11 +636,11 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
             controleSons(1, *musica, sons[1]); // Função de controle geral sons - tocar som clicou
             botoes_gerenciador[6].cor_botao = GREEN;
             submenu_tela = 6;
-            exportou = exportarCsv(cartas);
+            exportou = exportarCsv(); // Chama a função de exportar cartas
         } // Submenu - EXPORTAR
 
         //---------------------------------------------------
-        // CONTROLE DAS TELAS:
+        // CONTROLE DAS TELAS ADICIONAIS:
         //---------------------------------------------------
 
         if (retornos_funcoes[0])
@@ -589,7 +694,8 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[], Carta
                     botoes_gerenciador[u].cor_botao = NOSSO_AZUL;
             }
         } // Muda apos clique a cor de fundo do botão
-    }
+
+    } // FIM LOOP GERAL
 
     return;
 }
