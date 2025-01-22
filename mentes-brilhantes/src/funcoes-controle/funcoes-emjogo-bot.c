@@ -1,4 +1,8 @@
-// FUNÇÕES PARA A TELA DE EM JOGO COM BOT - SEM SER PARTE DE DESENHO
+/*
+-->FUNÇÕES EM JOGO BOT (SINGLEPLAYER)<--
+Aqui é onde é realizado o controle geral do menu de jogo singleplayer,
+inicializando as variasveis, cuidando dos contadores de tempo e sistemas de
+tela/botoes, além da logica basica dos submenus da tela.*/
 
 //---------------------------------
 // INCLUDES
@@ -18,6 +22,7 @@
 #include <stdbool.h>
 #include "desenho-game-bot.h"
 #include <time.h>
+#include "funcoes-adicionais-emjogo.h"
 
 //---------------------------------
 // FUNÇAO PRINCIPAL
@@ -32,8 +37,9 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
 
     int submenu_tela = 0; // Variavel do submenus do jogo - ajuda para correta lógica das telas - começa em configurações da partida
     Botao botoes[2];
-    int dificuldade;                               // Variavel usada para fazer o sistema de gameplay do jogo
-    int quantidades_cartas[2] = {0, 0};            // Quantidade de cartas do bot e jogador nessa ordem
+    int dificuldade;                       // Variavel usada para fazer o sistema de gameplay do jogo
+    int quantidades_cartas[3] = {0, 0, 0}; // Quantidade de cartas do bot, jogador e empates_seguidos nessa ordem
+    // int quantidade_empates_seguidos = 0;
     long int contador_tempo[4] = {179, 0, 0, 211}; // Contadores de tempo baseado em FPS
     int id_imagem = -1;                            // Usado para carregar a imagem da carta
     int id_imagem_bot = -1;                        // Usado para carregar a imagem da carta
@@ -42,7 +48,7 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
     int vezJogar = 1;     // Começa jogando o player
     int btn_clicado = -1; // Botao clicado por ultimo do jogador
     bool clicado_btn = false;
-
+    
     //---------------------------------
     // INICIALIZANDO OS VETORES E AS IMAGENS
     //---------------------------------
@@ -50,8 +56,10 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
     // Incializando os vetores de cartas do bot e do jogador:
     Carta *cartas_bot = NULL;
     Carta *cartas_jogador = NULL;
+    Carta *pilha_empate = NULL;
     cartas_jogador = (Carta *)malloc(sizeof(Carta));
     cartas_bot = (Carta *)malloc(sizeof(Carta));
+    pilha_empate = (Carta *)malloc(sizeof(Carta));
     Carta carta;     // Carta usada para ser desenhada na tela
     Carta carta_bot; // Carta usada para ser desenhada na tela
 
@@ -88,7 +96,74 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
         checarTelaCheia(); // Chama função que verifica as condições de tela cheia
         leMouse();
         controleSons(0, *musica, sons[0]);
-        desenhaJogoSingleplayer(target, &botoes[0], fundo, botoes_radio, submenu_tela, contador_tempo, &img_carta, &carta, &frente_carta, quantidades_cartas, vezJogar, &img_carta_bot, &carta_bot, fundo_carta, btn_clicado);
+        desenhaJogoSingleplayer(target, botoes, fundo, botoes_radio, submenu_tela, contador_tempo, &img_carta, &carta, &frente_carta, quantidades_cartas, vezJogar, &img_carta_bot, &carta_bot, fundo_carta, btn_clicado);
+
+        //---------------------------------
+        // CONTROLES RESALTA BOTOES
+        //---------------------------------
+
+        botoes_resaltar = 0; // Zerando para reuso
+
+        if (CheckCollisionPointRec(posicao_mouse, botoes[0].colisao) && !coresIguais(botoes[0].cor_botao, GREEN))
+        {
+            botoes_resaltar = 1;
+        }
+        else if (!coresIguais(botoes[0].cor_botao, GREEN))
+        {
+            botoes_resaltar = 0;
+        }
+
+        if (submenu_tela == 0 && !botoes_resaltar)
+        {
+            if (CheckCollisionPointRec(posicao_mouse, botoes[1].colisao) && !coresIguais(botoes[1].cor_botao, GREEN))
+            {
+                botoes_resaltar = 1;
+            }
+            else if (!coresIguais(botoes[1].cor_botao, GREEN))
+            {
+                botoes_resaltar = 0;
+            }
+        }
+
+        if (submenu_tela == 2 && !botoes_resaltar)
+        {
+            if (vezJogar == 1)
+            {
+                for (int s = 0; s < 4; s++)
+                {
+                    if (CheckCollisionPointRec(posicao_mouse, (Rectangle){15 + 21, 130 + 244 + (s * 45), 244, 35}))
+                    {
+                        botoes_resaltar = 1;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int s = 0; s < 4; s++)
+                {
+                    if (CheckCollisionPointRec(posicao_mouse, (Rectangle){15 + 21, 130 + 244 + (s * 45), 244, 35}))
+                    {
+                        botoes_resaltar = 2;
+                        break;
+                    }
+                }
+            }
+        }
+
+        /*if (!botoes_resaltar)
+        {
+            if (CheckCollisionPointRec(posicao_mouse, botao_menu_som[0].colisao) && !coresIguais(botao_menu_som[0].cor_botao, GREEN))
+            {
+                botao_menu_som[0].cor_botao = NOSSO_CIANO;
+                botoes_resaltar = 1;
+            }
+            else if (!coresIguais(botao_menu_som[0].cor_botao, GREEN))
+            {
+                botao_menu_som[0].cor_botao = NOSSO_AZUL;
+                botoes_resaltar = 0;
+            }
+        }*/
 
         //---------------------------------
         // CONTROLES DO JOGO
@@ -111,7 +186,7 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
                 }
 
                 submenu_tela = 1;
-                iniciar_jogo(&cartas_bot, &cartas_jogador, dificuldade, quantidades_cartas);
+                iniciar_jogo_bot(&cartas_bot, &cartas_jogador, quantidades_cartas);
 
             } // Iniciar Jogo
         }
@@ -173,7 +248,7 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
 
             if (vezJogar == 1 && clicado_btn == true && contador_tempo[3] > 209)
             {
-                clicado(&btn_clicado, &cartas_bot, &cartas_jogador, quantidades_cartas);
+                clicado(&btn_clicado, &cartas_bot, &cartas_jogador, &pilha_empate, quantidades_cartas, 1);
                 clicado_btn = false;
                 contador_tempo[2] = 0;
                 checaVitoria(quantidades_cartas, &submenu_tela);
@@ -182,7 +257,7 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
 
             if (vezJogar == 0 && clicado_btn == true && contador_tempo[3] > 209)
             {
-                clicado(&btn_clicado, &cartas_bot, &cartas_jogador, quantidades_cartas);
+                clicado(&btn_clicado, &cartas_bot, &cartas_jogador, &pilha_empate, quantidades_cartas, 1);
                 clicado_btn = false;
                 contador_tempo[2] = 0;
                 checaVitoria(quantidades_cartas, &submenu_tela);
@@ -234,478 +309,3 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
 
     return;
 }
-
-//---------------------------------
-// FUNÇOES ADICIONAIS
-//---------------------------------
-
-void iniciar_jogo(Carta **cartas_bot, Carta **cartas_jogador, int dificuldade, int quantidades_cartas[2])
-{
-    int cartas_escolhidas[quantidade_cartas]; // Usado para determinar os indices das cartas de cada jogador
-
-    (void)dificuldade;
-
-    // Preencher o array com valores possiveis de cartas:
-    for (int i = 0; i < quantidade_cartas; i++)
-    {
-        cartas_escolhidas[i] = i;
-    }
-
-    // Embaralhar o array:
-    for (int i = quantidade_cartas - 1; i > 0; i--)
-    {
-        int j = rand() % (i + 1);
-        int temp = cartas_escolhidas[i];
-        cartas_escolhidas[i] = cartas_escolhidas[j];
-        cartas_escolhidas[j] = temp;
-    }
-
-    for (int k = 0; k < quantidade_cartas; k++)
-    {
-        if (k % 2 == 0)
-        {
-            // Copia vetor cartas para o bot:
-            quantidades_cartas[0]++;
-            *cartas_bot = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-            (*cartas_bot)[quantidades_cartas[0] - 1] = cartas[cartas_escolhidas[k]];
-        }
-        else
-        {
-            // Copia vetor cartas para o jogador:
-            quantidades_cartas[1]++;
-            *cartas_jogador = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-            (*cartas_jogador)[quantidades_cartas[1] - 1] = cartas[cartas_escolhidas[k]];
-        }
-    } // For que copia as informações das cartas aleatorias geradas para cada baralho, atualizando tambem a quantidade de cartas
-
-    return;
-} // Função que prepara o jogo para iniciar
-
-void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, int *quantidades_cartas)
-{
-    Carta temporaria; // Usada para copiar as informações da primeira carta
-
-    //---------------------------------
-    // CASO SUPER TRUNFO
-    //---------------------------------
-
-    if ((*cartas_bot)[0].super_trunfo || (*cartas_jogador)[0].super_trunfo)
-    {
-        if ((*cartas_bot)[0].super_trunfo)
-        {
-            if ((*cartas_jogador)[0].hexadecimal[1] == 'A')
-            {
-                quantidades_cartas[1]++;
-                quantidades_cartas[0]--;
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-
-                temporaria = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = temporaria;
-            }
-            else
-            {
-                quantidades_cartas[0]++;
-                quantidades_cartas[1]--;
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-                (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-
-                temporaria = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot)[quantidades_cartas[0] - 1] = temporaria;
-            }
-        }
-
-        if ((*cartas_jogador)[0].super_trunfo)
-        {
-            if ((*cartas_bot)[0].hexadecimal[1] == 'A')
-            {
-                quantidades_cartas[0]++;
-                quantidades_cartas[1]--;
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-                (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-
-                temporaria = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot)[quantidades_cartas[0] - 1] = temporaria;
-            }
-            else
-            {
-                quantidades_cartas[1]++;
-                quantidades_cartas[0]--;
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-
-                temporaria = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = temporaria;
-            }
-        }
-    }
-    else
-    {
-        //---------------------------------
-        // DEMAIS CASOS
-        //---------------------------------
-
-        switch (*btn_clicado)
-        {
-        case 0:
-
-            if ((*cartas_jogador)[0].curiosidade >= (*cartas_bot)[0].curiosidade)
-            {
-                quantidades_cartas[1]++;
-                quantidades_cartas[0]--;
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-
-                temporaria = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = temporaria;
-                break;
-            }
-
-            if ((*cartas_jogador)[0].curiosidade < (*cartas_bot)[0].curiosidade)
-            {
-                quantidades_cartas[0]++;
-                quantidades_cartas[1]--;
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-                (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-
-                temporaria = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot)[quantidades_cartas[0] - 1] = temporaria;
-                break;
-            }
-            break;
-        case 1:
-
-            if ((*cartas_jogador)[0].criatividade >= (*cartas_bot)[0].criatividade)
-            {
-                quantidades_cartas[1]++;
-                quantidades_cartas[0]--;
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-
-                temporaria = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = temporaria;
-                break;
-            }
-
-            if ((*cartas_jogador)[0].criatividade < (*cartas_bot)[0].criatividade)
-            {
-                quantidades_cartas[0]++;
-                quantidades_cartas[1]--;
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-                (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-
-                temporaria = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot)[quantidades_cartas[0] - 1] = temporaria;
-                break;
-            }
-            break;
-        case 2:
-
-            if ((*cartas_jogador)[0].inovacao >= (*cartas_bot)[0].inovacao)
-            {
-                quantidades_cartas[1]++;
-                quantidades_cartas[0]--;
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-
-                temporaria = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = temporaria;
-                break;
-            }
-
-            if ((*cartas_jogador)[0].inovacao < (*cartas_bot)[0].inovacao)
-            {
-                quantidades_cartas[0]++;
-                quantidades_cartas[1]--;
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-                (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-
-                temporaria = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot)[quantidades_cartas[0] - 1] = temporaria;
-                break;
-            }
-            break;
-        case 3:
-
-            if ((*cartas_jogador)[0].idade >= (*cartas_bot)[0].idade)
-            {
-                quantidades_cartas[1]++;
-                quantidades_cartas[0]--;
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-
-                temporaria = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = temporaria;
-                break;
-            }
-
-            if ((*cartas_jogador)[0].idade < (*cartas_bot)[0].idade)
-            {
-                quantidades_cartas[0]++;
-                quantidades_cartas[1]--;
-                (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
-                (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
-                for (int u = 0; u < quantidades_cartas[1]; u++)
-                {
-                    (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
-                }
-                (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
-
-                temporaria = (*cartas_bot)[0];
-                for (int u = 0; u < quantidades_cartas[0]; u++)
-                {
-                    (*cartas_bot)[u] = (*cartas_bot)[u + 1];
-                }
-                (*cartas_bot)[quantidades_cartas[0] - 1] = temporaria;
-                break;
-            }
-            break;
-        default:
-            break;
-        }
-    }
-
-    *btn_clicado = -1; // Reset do botão para a próxima jogada
-
-    // Exibição do baralho atual de cada:
-
-    printf("\nBaralho Player:\n");
-
-    for (int t = 0; t < quantidades_cartas[1]; t++)
-    {
-        printf("%s\n", (*cartas_jogador)[t].nome);
-    }
-
-    printf("\nBaralho Bot:\n");
-
-    for (int t = 0; t < quantidades_cartas[0]; t++)
-    {
-        printf("%s\n", (*cartas_bot)[t].nome);
-    }
-
-    return;
-} // Função que trata das condições de ganho de cada rodada
-
-void empate()
-{
-
-    return;
-} // Função que trata dos casos de empate
-
-int iaBot(Carta *cartas_bot, int dificuldade)
-{
-    int random_start[4];
-    random_start[0] = cartas_bot[0].curiosidade;
-    random_start[1] = cartas_bot[0].criatividade;
-    random_start[2] = cartas_bot[0].inovacao;
-    random_start[3] = cartas_bot[0].idade;
-
-    int candidatos[4], j = 0;
-
-    switch (dificuldade)
-    {
-    case 0:
-    { // Remover os dois maiores valores
-        for (int count = 0; count < 2; count++)
-        {
-
-            int maior_valor = random_start[0], maior_indice = 0;
-
-            for (int i = 1; i < 4; i++)
-            {
-                if (random_start[i] > maior_valor)
-                {
-                    maior_valor = random_start[i];
-                    maior_indice = i;
-                }
-            }
-            random_start[maior_indice] = -1; // Marca o maior valor como removido
-        } // Execução duas vezes
-
-        // Adicionar índices restantes ao vetor de candidatos
-        for (int i = 0; i < 4; i++)
-        {
-            if (random_start[i] != -1)
-            {
-                candidatos[j++] = i;
-            }
-        } // Criando o vetor de saida
-        break;
-    }
-    case 1:
-    { // Remover o maior valor
-
-        int maior_valor = random_start[0], maior_indice = 0;
-
-        for (int i = 1; i < 4; i++)
-        {
-            if (random_start[i] > maior_valor)
-            {
-                maior_valor = random_start[i];
-                maior_indice = i;
-            }
-        }
-        random_start[maior_indice] = -1; // Marca o maior valor como removido
-
-        // Adicionar índices restantes ao vetor de candidatos
-        for (int i = 0; i < 4; i++)
-        {
-            if (random_start[i] != -1)
-            {
-                candidatos[j++] = i;
-            }
-        } // Criando o vetor de saida
-        break;
-    }
-    case 2:
-    { // Remover os dois menores valores
-        for (int count = 0; count < 2; count++)
-        {
-
-            int menor_valor = random_start[0], menor_indice = 0;
-
-            for (int i = 1; i < 4; i++)
-            {
-                if (random_start[i] != -1 && random_start[i] < menor_valor)
-                {
-                    menor_valor = random_start[i];
-                    menor_indice = i;
-                }
-            }
-            random_start[menor_indice] = -1; // Marca o menor valor como removido
-        }
-
-        // Adicionar índices restantes ao vetor de candidatos
-        for (int i = 0; i < 4; i++)
-        {
-            if (random_start[i] != -1)
-            {
-                candidatos[j++] = i;
-            }
-        } // Criando o vetor de saida
-        break;
-    }
-    default:
-        return -1; // Retorna -1 para dificuldade inválida
-    }
-
-    // Randomizar entre os valores restantes
-
-    int escolha_aleatoria = rand() % j; // Randomiza entre 0 e j-1
-
-    return candidatos[escolha_aleatoria];
-
-} // Função que simula uma ia de escolhas do bot baseado na dificuldade
-
-void checaVitoria(int *quantidades_cartas, int *submenu_tela)
-{
-    if (quantidades_cartas[0] == 0)
-    {
-        *submenu_tela = 5;
-    }
-
-    if (quantidades_cartas[1] == 0)
-    {
-        *submenu_tela = 6;
-    }
-    return;
-} // Função que verifica se alguem ganhou o jogo, se sim sinaliza para os desenhos

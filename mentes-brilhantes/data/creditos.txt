@@ -10,3 +10,5 @@ AUTORES
 > Gabriel Felipe Ferdinandi de Souza;
 > Gustavo Ferreira da Fonseca;
 > Thiago André Mattos Malagá;
+
+DETALHES

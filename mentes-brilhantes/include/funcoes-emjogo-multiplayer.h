@@ -1,0 +1,5 @@
+#ifndef FUNCOES_EMJOGO_MULTIPLAYER_H
+#define FUNCOES_EMJOGO_MULTIPLAYER_H
+void jogarMultiplayer();
+
+#endif // FUNCOES_EMJOGO_MULTIPLAYER_H

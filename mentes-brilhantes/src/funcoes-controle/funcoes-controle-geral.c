@@ -124,9 +124,8 @@ void abrePdf()
         posicao_mouse.y = GetMouseY();
         BeginDrawing();
         ClearBackground(NOSSO_BEGE);
-        DrawText(TextFormat("DETECTADA PRIMEIRA ENTRADA NO JOGO"), 26, 15, 20, NOSSO_AMARELO);
+        DrawText(TextFormat("DETECTADA PRIMEIRA ENTRADA NO JOGO"), 26, 15, 20, BLACK);
         DrawText(TextFormat("DESEJA ABRIR O PDF DE REGRAS?"), 11, 55, 27, NOSSO_AZUL);
-        DrawText(TextFormat("(%.2f,%.2f) - FPS: %d", posicao_mouse.x, posicao_mouse.y, GetFPS()), 3, 222, 20, RED);
         EndDrawing();
         for (int t = 0; t < 2; t++)
         {
@@ -149,14 +148,13 @@ void abrePdf()
 
         if (checarClique(&botoes_pdf[0].colisao))
         {
-            printf("\nAbrindo PDF inicial...\n");
-            #ifdef _WIN32
-                        system("start ./data/instrucoes.pdf");
-            #elif __linux__
-                        system("xdg-open ./data/instrucoes.pdf");
-            #else
-                        printf("Sistema operacional não suportado. PDF não será aberto!\n");
-            #endif
+#ifdef _WIN32
+            system("start ./data/instrucoes.pdf");
+#elif __linux__
+            system("xdg-open ./data/instrucoes.pdf");
+#else
+            escreverLog("Sistema operacional não suportado. PDF não será aberto!");
+#endif
             CloseWindow();
         }
 
@@ -251,3 +249,16 @@ void checaSeletor(Seletor caixas[], int qtd__caixas_seletor, int grupo_seleciona
 
     return;
 } // Função que checa quais seletor estao selecionados pelo clique do usuário
+
+
+void resetarCartas(){
+
+    quantidade_cartas = 32;
+
+    cartas = realloc(cartas, 32 * sizeof(Carta));
+
+    for(int s = 0; s < 32; s++){
+        cartas[s] = cartas_multiplayer[s];
+    }
+
+} //Função que reseta cartas para as originais, usando as cartas do multiplayer que são as mesmas do banco original

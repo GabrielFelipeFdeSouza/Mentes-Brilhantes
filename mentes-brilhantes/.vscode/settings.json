@@ -5,6 +5,13 @@
         "funcoes-menu.h": "c",
         "raylib.h": "c",
         "string.h": "c",
-        "structs-gerais.h": "c"
-    }
+        "structs-gerais.h": "c",
+        "funcoes-adicionais-emjogo.h": "c",
+        "funcoes-emjogo-multiplayer.h": "c",
+        "funcoes-controle-geral.h": "c",
+        "desenho-game-multiplayer.h": "c",
+        "desenho-geral.h": "c",
+        "desenho-game-bot.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

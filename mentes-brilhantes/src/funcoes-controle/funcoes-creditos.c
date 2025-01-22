@@ -28,6 +28,7 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
     int *posicoes_desenho_txt;
     int posicoes_desenho_cartas[3];
     int quantidade_cartas_desenhadas = 0;
+    int animacoes_ativas[2] = {1,1};
 
     Carta *cartas_totais;
     Carta cartas_fundo[3];
@@ -150,7 +151,17 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
 
         contador_tempo[0]++;
 
-        if (contador_tempo[0] % 3 != 0 && !IsMouseButtonDown(0))
+        //Controle das animações:
+
+        if(IsMouseButtonPressed(0)){
+            animacoes_ativas[1] =  !animacoes_ativas[1];
+        }
+
+        if(IsMouseButtonPressed(1)){
+            animacoes_ativas[0] =  !animacoes_ativas[0];
+        }
+
+        if (contador_tempo[0] % 3 != 0 && animacoes_ativas[1])
         {
             for (int p = 0; p < tamanho_texto; p++)
             {
@@ -158,7 +169,7 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
             }
         }
 
-        if (!IsMouseButtonDown(1))
+        if (animacoes_ativas[0])
         {
             posicoes_desenho_cartas[0]++;
             posicoes_desenho_cartas[1]--;

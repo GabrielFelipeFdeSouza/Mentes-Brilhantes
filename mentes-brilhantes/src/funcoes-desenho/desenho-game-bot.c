@@ -14,23 +14,11 @@
 #include <math.h>
 #include <stdbool.h>
 
-void desenhaJogoSingleplayer(RenderTexture2D *target, Botao *botoes, Texture2D fundo, RadioButton *botoes_radio, int sub_menu, long int contador_tempo[2], Texture2D img_carta, Carta carta, Texture2D frente_carta, int quantidades_cartas[2], int vezJogar, Texture2D img_carta_bot, Carta carta_bot, Texture2D fundo_carta, int btn_clicado)
+void desenhaJogoSingleplayer(RenderTexture2D *target, Botao *botoes, Texture2D fundo, RadioButton *botoes_radio, int sub_menu, long int contador_tempo[2], Texture2D img_carta, Carta carta, Texture2D frente_carta, int quantidades_cartas[3], int vezJogar, Texture2D img_carta_bot, Carta carta_bot, Texture2D fundo_carta, int btn_clicado)
 {
     BeginTextureMode(*target);       // Tudo que for desenhado dessa função até EndTextureMode será automaticamente escalado
     ClearBackground(BLUE);           // Fundo da tela
     DrawTexture(fundo, 0, 0, WHITE); // Desenha o fundo
-
-    for (int y = 0; y < 1; y++)
-    {
-        if (CheckCollisionPointRec(posicao_mouse, botoes[0].colisao))
-        {
-            break;
-        }
-        if (y == 1 - 1)
-        {
-            SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-        }
-    } // For que arruma o tipo de cursor nos botoes normais
 
     if (sub_menu == 2)
     {
@@ -39,7 +27,7 @@ void desenhaJogoSingleplayer(RenderTexture2D *target, Botao *botoes, Texture2D f
         desenhaCarta(15, 130, &frente_carta, &carta, img_carta); // Chama a função para desenhar a carta na posição x,y
     } // Se estiver no submenu 2 (JOGO), desenha as cartas
 
-    if (sub_menu == 2 && contador_tempo[3] < 210)
+    if (sub_menu == 2 && contador_tempo[3] < 211)
     {
         desenhaCarta(700, 15, &frente_carta, &carta_bot, img_carta_bot); // Chama a função para desenhar a carta na posição x,y
     } // Se estiver no submenu 2 (JOGO) e estiver na faixa de transição, desenha a carta do bot
@@ -122,6 +110,8 @@ void desenhaJogoSingleplayer(RenderTexture2D *target, Botao *botoes, Texture2D f
 
     // DrawRectangle(x + 21, y + 244 + t * 45, 244, 35, NOSSO_BEGE);
 
+    resaltaBotoes();
+
     EndTextureMode();
     desenhoRedimensionado(target); // Chama a função que desenha redimensionadamente
     return;
@@ -144,12 +134,15 @@ void incluir_menu2(long int contador_tempo[2])
     return;
 }
 
-void incluir_menu3(long int contador_tempo[2], int quantidades_cartas[2])
+void incluir_menu3(long int contador_tempo[2], int quantidades_cartas[3])
 {
     DrawText(TextFormat("%02d:%02d", (contador_tempo[1] / 3600), (contador_tempo[1] / 60 % 60)), 15, 8, 30, WHITE);
     DrawRectangleLinesEx((Rectangle){3, 4, 99, 36}, 4, WHITE);
 
-    DrawText(TextFormat("JOGADOR"), 310, 510, 33, NOSSO_AZUL);
+    DrawText(TextFormat("Pilha: %d", quantidades_cartas[2] * 2), 15, 45, 30, WHITE);
+    DrawRectangleLinesEx((Rectangle){3, 41, 136, 36}, 4, WHITE);
+
+    DrawText(TextFormat("JOGADOR"), 320, 505, 33, NOSSO_AZUL);
     DrawRectangleLinesEx((Rectangle){320, 540, 125, 55}, 4, NOSSO_AMARELO);
     DrawText(TextFormat("%d", quantidades_cartas[1]), 358, 548, 45, NOSSO_AMARELO);
 

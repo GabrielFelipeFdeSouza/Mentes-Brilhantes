@@ -49,7 +49,7 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[])
     Texture2D img_carta; // Usada na imagem do rosto atual
 
     // Definindo os botões do gerenciador:
-    Botao botoes_gerenciador[10]; // Declara todos os botões da tela do gerenciador
+    Botao botoes_gerenciador[11]; // Declara todos os botões da tela do gerenciador
     botoes_gerenciador[0].colisao = criarBotao(&botoes_gerenciador[0], 906, 552, NOSSO_AZUL, "MENU", 26, NOSSO_CINZA);
     botoes_gerenciador[1].tamanho_fonte_texto = criarBotaoTxtRedimensionavel(&botoes_gerenciador[1], 4, 3, 303, 53, NOSSO_AZUL, "ADICIONAR CARTA", NOSSO_CINZA);
     botoes_gerenciador[2].tamanho_fonte_texto = criarBotaoTxtRedimensionavel(&botoes_gerenciador[2], 4, 58, 303, 53, NOSSO_AZUL, "EXCLUIR CARTA", NOSSO_CINZA);
@@ -60,6 +60,7 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[])
     botoes_gerenciador[7].colisao = criarBotao(&botoes_gerenciador[7], 80, 545, NOSSO_AZUL, "ADICIONAR", 23, NOSSO_CINZA);
     botoes_gerenciador[8].colisao = criarBotao(&botoes_gerenciador[8], 100, 545, NOSSO_AZUL, "EDITAR", 23, NOSSO_CINZA);
     botoes_gerenciador[9].colisao = criarBotao(&botoes_gerenciador[9], 78, 545, NOSSO_AZUL, "PESQUISAR", 23, NOSSO_CINZA);
+    botoes_gerenciador[10].colisao = criarBotao(&botoes_gerenciador[10], 42, 545, NOSSO_AZUL, "RESETAR CARTAS", 23, NOSSO_CINZA);
 
     // Definindo os botões invisiveis do gerenciador (Setas):
     BotaoNulo botoes_nulos_gerenciador[2]; // Declara os botões invisiveis do gerenciado
@@ -149,6 +150,22 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[])
 
         while (1)
         {
+            if (submenu_tela == 5)
+            {
+                if (botoes_resaltar == 1)
+                {
+                    break;
+                }
+                if (CheckCollisionPointRec(posicao_mouse, botoes_gerenciador[10].colisao) && !coresIguais(botoes_gerenciador[10].cor_botao, GREEN))
+                {
+                    botoes_resaltar = 1;
+                }
+                else if (!coresIguais(botoes_gerenciador[10].cor_botao, GREEN))
+                {
+                    botoes_resaltar = 0;
+                }
+            }
+
             if (submenu_tela == 3)
             {
                 if (botoes_resaltar == 1)
@@ -385,6 +402,17 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[])
 
         } // FIM SUBMENU PESQUISAR
 
+        // LISTAR:
+        if (submenu_tela == 5)
+        {
+            if (checarClique(&botoes_gerenciador[10].colisao) && estado_tela != 2)
+            {
+                controleSons(1, *musica, sons[1]); // Função de controle geral sons - tocar som clicou
+                botoes_gerenciador[10].cor_botao = GREEN;
+                resetarCartas();
+            } 
+        } //LISTAR
+
         // EDITAR:
         if (submenu_tela == 3)
         {
@@ -618,7 +646,7 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[])
             }
             else
             {
-                printf("\nIMPOSSIVEL EXCLUIR A CARTA, SOBROU APENAS 1 NO ARQUIVO BIN!\n");
+                printf("\nGAME: IMPOSSIVEL EXCLUIR A CARTA, SOBROU APENAS 1 NO ARQUIVO BIN!\n");
                 retornos_funcoes[0] = 1;
             }
         } // Submenu - EXCLUIR
@@ -688,7 +716,7 @@ void gerenciarCartas(RenderTexture2D *target, Music *musica, Sound sons[])
 
         if (!IsSoundPlaying(sons[1]))
         {
-            for (int u = 0; u < 7; u++)
+            for (int u = 0; u < 11; u++)
             {
                 if (coresIguais(botoes_gerenciador[u].cor_botao, GREEN))
                     botoes_gerenciador[u].cor_botao = NOSSO_AZUL;

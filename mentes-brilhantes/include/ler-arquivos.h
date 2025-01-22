@@ -5,4 +5,5 @@
 int carregarDadosCSV();
 bool verificaOuCriaArquivoBinario();
 int carregarDadosBIN();
+void lerCartasMultiplayer();
 #endif //LER_ARQUIVOS_H

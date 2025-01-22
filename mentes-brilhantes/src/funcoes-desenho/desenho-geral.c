@@ -76,16 +76,6 @@ void desenharBotaoTxt(Botao botao)
 void desenharBotaoNulo(BotaoNulo botao)
 {
 
-    if (CheckCollisionPointRec(posicao_mouse, botao.colisao) && !coresIguais(botao.cor_botao, GREEN))
-    {
-        botao.cor_botao = NOSSO_CIANO;
-        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-    }
-    else if (!coresIguais(botao.cor_botao, GREEN))
-    {
-        botao.cor_botao = NOSSO_AZUL;
-    }
-
     DrawRectangle(-4 + botao.colisao.x, -4 + botao.colisao.y, 8 + botao.colisao.width, 8 + botao.colisao.height, NOSSO_AMARELO);
     DrawRectangle(botao.colisao.x, botao.colisao.y, botao.colisao.width, botao.colisao.height, botao.cor_botao);
 
@@ -165,17 +155,20 @@ void desenhaCarta(int x, int y, Texture2D *frente_carta, Carta *carta, Texture2D
     return;
 } // Função que desenha a carta na tela, a partir de x,y
 
-int btnsCartasClicados(int x, int y){
+int btnsCartasClicados(int x, int y)
+{
 
-    for(int s = 0; s < 4; s++){
-        if(IsMouseButtonPressed(0) && CheckCollisionPointRec(posicao_mouse, (Rectangle){x+21, y + 244 + (s * 45), 244, 35})){
+    for (int s = 0; s < 4; s++)
+    {
+        if (IsMouseButtonPressed(0) && CheckCollisionPointRec(posicao_mouse, (Rectangle){x + 21, y + 244 + (s * 45), 244, 35}))
+        {
             return s;
         }
     }
 
     return -1;
 
-}//Desenha e checa os botoes das cartas
+} // Desenha e checa os botoes das cartas
 
 void desenhoRedimensionado(RenderTexture2D *target)
 {
@@ -331,5 +324,22 @@ void desenhaSeletor(Seletor caixas[], int quantidade_seletor, int grupo_selecion
         }
     }
 
+    return;
+}
+
+void resaltaBotoes()
+{
+    if (botoes_resaltar == 1)
+    {
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+    }
+    else if (botoes_resaltar == 0)
+    {
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+    }
+    else if (botoes_resaltar == 2)
+    {
+        SetMouseCursor(MOUSE_CURSOR_NOT_ALLOWED);
+    }
     return;
 }

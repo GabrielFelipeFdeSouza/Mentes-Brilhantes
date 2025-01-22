@@ -37,6 +37,9 @@ void desenhoMenu(RenderTexture2D *target, Botao botoes[], int quantidade_botoes,
     DrawText(TextFormat("Posição do mouse: (%.2f,%.2f) - FPS: %d", posicao_mouse.x, posicao_mouse.y, GetFPS()), 1, 1, 20, RED);
     desenharBotaoNulo(botao); //Desenha os botões nulos, nesse caso o da imagem de som
     DrawTexture(img_btn_som, 916, 525, WHITE);
+
+    resaltaBotoes();
+
     EndTextureMode();
 
     desenhoRedimensionado(target); //Chama a função que desenha redimensionadamente

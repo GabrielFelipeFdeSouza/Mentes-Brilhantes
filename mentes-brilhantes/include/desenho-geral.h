@@ -16,5 +16,5 @@ void resaltaRadioButton();
 void desenhaTextBox();
 void desenhaSeletor();
 int btnsCartasClicados();
-
+void resaltaBotoes();
 #endif

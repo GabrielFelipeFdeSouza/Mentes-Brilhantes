@@ -55,7 +55,6 @@ void desenhaCreditos(RenderTexture2D *target, Botao botao, Texture2D fundo, int 
     }
 
     desenharBotaoTxt(botao);
-    // DrawText(TextFormat("Posição do mouse: (%.2f,%.2f) - FPS: %d", posicao_mouse.x, posicao_mouse.y, GetFPS()), 1, 1, 20, RED);
     EndTextureMode();
 
     desenhoRedimensionado(target); // Chama a função que desenha redimensionadamente

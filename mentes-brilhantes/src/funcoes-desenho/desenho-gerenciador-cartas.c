@@ -24,69 +24,73 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
     DrawRectangleLinesEx((Rectangle){0, 275, 311, 325}, 3, BLACK); // Desenha um retangulo preto vazado para controles
 
     DrawTexture(seta, 910, 255, WHITE);                                 // Desenha a seta da direita
-    DrawTextureEx(seta, (Vector2){400, 255 + 72}, 180.0f, 1.0f, WHITE); // Desenha a seta da esquerda 
+    DrawTextureEx(seta, (Vector2){400, 255 + 72}, 180.0f, 1.0f, WHITE); // Desenha a seta da esquerda
 
     desenhaCarta(500, 100, &frente_carta, &carta, img_carta); // Chama a função para desenhar a carta na posição x,y
 
     DrawRectangleLinesEx((Rectangle){320, 15, 160, 55}, 5, WHITE); // Desenha um retangulo branco para numero de cartas
     DrawText(TextFormat("%d / %d", carta_atual, total_cartas), 333, 25, 35, WHITE);
 
-    if(submenu_tela == 4 && botoes_radio[5].estado != true)
+    if (submenu_tela == 4 && botoes_radio[5].estado != true)
     {
         DrawText(TextFormat("de"), 142, 288, 27, BLACK);
-    } //Desenha o "de" para caixas de valores
+    } // Desenha o "de" para caixas de valores
 
     switch (submenu_tela)
     {
-        case 1:
-            incluir_adicionar(botoes_radio, quantidade_botoes_radio, 1, caixa_texto, caixas);
-            break;
-        case 3:
-            incluir_editar(botoes_radio, quantidade_botoes_radio, 1, caixa_texto, caixas);
-            break;
-        case 4:
-            incluir_pesquisar(botoes_radio, quantidade_botoes_radio, 1, caixa_texto_pesquisar, caixas);
-            break;
-        case 5:
-            incluir_listar();
-            break;
-        case 6:
-            incluir_exportar(exportou);
-            break;
+    case 1:
+        incluir_adicionar(botoes_radio, quantidade_botoes_radio, 1, caixa_texto, caixas);
+        break;
+    case 3:
+        incluir_editar(botoes_radio, quantidade_botoes_radio, 1, caixa_texto, caixas);
+        break;
+    case 4:
+        incluir_pesquisar(botoes_radio, quantidade_botoes_radio, 1, caixa_texto_pesquisar, caixas);
+        break;
+    case 5:
+        desenharBotaoTxt(&botoes[10], 1);
+        incluir_listar();
+        break;
+    case 6:
+        incluir_exportar(exportou);
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
 
     for (int t = 0; t < quantidade_botoes; t++)
     {
 
-        if(t == 7 || t == 8 || t == 9){
-            if(submenu_tela == 1)
+        if (t == 7 || t == 8 || t == 9)
+        {
+            if (submenu_tela == 1)
             {
                 desenharBotaoTxt(botoes[7]);
-            }   
-            if(submenu_tela == 3)
+            }
+            if (submenu_tela == 3)
             {
                 desenharBotaoTxt(botoes[8]);
-            }  
-            if(submenu_tela == 4)
+            }
+            if (submenu_tela == 4)
             {
                 desenharBotaoTxt(botoes[9]);
             }
-        } else{
+        }
+        else
+        {
             desenharBotaoTxt(botoes[t]);
         }
-                
+
     } // Desenha todos os botões - Nulos e normais
 
-    if(retornos_funcoes[0])
+    if (retornos_funcoes[0])
     {
         DrawText(TextFormat("Erro ao excluir carta, há apenas uma!"), 506, 27, 25, BLACK);
         DrawText(TextFormat("Erro ao excluir carta, há apenas uma!"), 508, 29, 25, RED);
     }
 
-    if(retornos_funcoes[1] == 1)
+    if (retornos_funcoes[1] == 1)
     {
         DrawText(TextFormat("Erro ao adicionar a carta,"), 570, 25, 25, BLACK);
         DrawText(TextFormat("Erro ao adicionar a carta,"), 572, 27, 25, RED);
@@ -94,7 +98,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
         DrawText(TextFormat("parametros vazios / errados!"), 557, 55, 25, RED);
     }
 
-    if(retornos_funcoes[1] == 2)
+    if (retornos_funcoes[1] == 2)
     {
         DrawText(TextFormat("Erro ao adicionar a carta,"), 570, 25, 25, BLACK);
         DrawText(TextFormat("Erro ao adicionar a carta,"), 572, 27, 25, RED);
@@ -102,7 +106,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
         DrawText(TextFormat("reveja os parametros hexadecimal!"), 514, 55, 25, RED);
     }
 
-    if(retornos_funcoes[1] == 3)
+    if (retornos_funcoes[1] == 3)
     {
         DrawText(TextFormat("Erro ao adicionar a carta,"), 570, 25, 25, BLACK);
         DrawText(TextFormat("Erro ao adicionar a carta,"), 572, 27, 25, RED);
@@ -110,7 +114,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
         DrawText(TextFormat("já existe um supertrunfo no baralho!"), 498, 55, 25, RED);
     }
 
-    if(retornos_funcoes[2] == 1)
+    if (retornos_funcoes[2] == 1)
     {
         DrawText(TextFormat("Erro ao adicionar a carta,"), 570, 25, 25, BLACK);
         DrawText(TextFormat("Erro ao adicionar a carta,"), 572, 27, 25, RED);
@@ -118,7 +122,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
         DrawText(TextFormat("parametros errados!"), 617, 55, 25, RED);
     }
 
-    if(retornos_funcoes[2] == 2)
+    if (retornos_funcoes[2] == 2)
     {
         DrawText(TextFormat("Erro ao editar a carta,"), 594, 25, 25, BLACK);
         DrawText(TextFormat("Erro ao editar a carta,"), 596, 27, 25, RED);
@@ -126,7 +130,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
         DrawText(TextFormat("reveja os parametros hexadecimal!"), 514, 55, 25, RED);
     }
 
-    if(retornos_funcoes[2] == 3)
+    if (retornos_funcoes[2] == 3)
     {
         DrawText(TextFormat("Erro ao editar a carta,"), 570, 25, 25, BLACK);
         DrawText(TextFormat("Erro ao editar a carta,"), 572, 27, 25, RED);
@@ -134,17 +138,9 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
         DrawText(TextFormat("já existe um supertrunfo no baralho!"), 498, 55, 25, RED);
     }
 
+    // DrawText(TextFormat("Posição do mouse: (%.2f,%.2f)", posicao_mouse.x, posicao_mouse.y), 450, 570, 20, BLUE);
 
-    DrawText(TextFormat("Posição do mouse: (%.2f,%.2f)", posicao_mouse.x, posicao_mouse.y), 450, 570, 20, BLUE);
-
-    if (botoes_resaltar > 0)
-        {
-            SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-        }
-        else
-        {
-            SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-        }
+    resaltaBotoes();
 
     EndTextureMode();
 
@@ -155,7 +151,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
 
 void incluir_listar()
 {
-    
+
     DrawRectangleLinesEx((Rectangle){4, 295, 302, 116}, 4, NOSSO_AMARELO);
     DrawText("QUANTIDADE DE", 8, 300, 35, NOSSO_CIANO);
     DrawText("QUANTIDADE DE", 10, 302, 35, NOSSO_AZUL);
@@ -200,7 +196,7 @@ void incluir_adicionar(RadioButton botoes_radio[], int quantidade_botoes_radio, 
     {
         desenhaTextBox(&caixa_texto[i]);
     }
-    
+
     return;
 }
 

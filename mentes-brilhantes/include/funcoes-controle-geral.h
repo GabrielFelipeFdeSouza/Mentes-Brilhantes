@@ -14,4 +14,5 @@ void abrePdf();
 void checaRadioButton();
 void leTeclado();
 void checaSeletor();
+void resetarCartas();
 #endif

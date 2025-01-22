@@ -8,15 +8,16 @@ endif
 #Configuração para Windows ou Unix:
 ifeq ($(OS),Windows_NT)
     INCLUDE = -I./include/ -L./libwin
-    EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -Wno-missing-braces -lraylib -lm -lopengl32 -lgdi32 -lwinmm -lws2_32
+    EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -Wno-missing-braces -lraylib -lm -lopengl32 -lgdi32 -lwinmm -lws2_32 -lwinhttp
     BIN = ./mentes-brilhantes.exe
     RC_FILE = ./resources.rc
     RES_OBJ = resources.o
 else
-    INCLUDE = -I./
+    INCLUDE = -I./include/
     EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
     BIN = ./mentes-brilhantes
 endif
+
 
 #Encontrar todos os arquivos .c recursivamente:
 SRC = $(shell find . -name "*.c")
@@ -71,7 +72,8 @@ clean:
 	@echo "Removendo arquivos executáveis e binários antigos!"
 	$(RM) $(BIN)
 	$(RM) -f ./data/cartas.bin
-	$(RM) -f ./Cartas.bin
+	$(RM) -f ./Cartas.csv
+	$(RM) -f ./data/log.txt
 ifeq ($(OS),Windows_NT)
 	$(RM) -f $(RES_OBJ)
 endif
@@ -97,11 +99,20 @@ help:
 	@echo ""
 	@echo "OPÇÕES do Make:"
 	@echo ""
-	@echo "make run -> Compila o jogo para o SO do windows ou linux (AUTOMÁTICO)"
+	@echo "make -> Apenas compila o jogo"
+	@echo ""
+	@echo "make run -> Compila o jogo para o SO do windows ou linux (AUTOMÁTICO) e executa o jogo"
 	@echo ""
 	@echo "make clean -> Remove arquivos executáveis antigos e BINs temporários"
 	@echo ""
+	@echo "make exec -> Executa a limpeza do clean, a compilação do make e o comando run"
+	@echo ""
 	@echo "make debug -> Compila o jopo para modo de depuração, ou seja, iniciando o GDB"
 	@echo ""
+
+
+exec:
+	make clean;
+	make run;
 
 .PHONY: all run clean debug help

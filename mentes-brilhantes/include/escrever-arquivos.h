@@ -5,4 +5,6 @@
 #include "raylib.h"
 void salvarDados();
 int exportarCsv();
+void iniciarArquivoLog();
+void escreverLog();
 #endif //ESCREVER_ARQUIVO_H

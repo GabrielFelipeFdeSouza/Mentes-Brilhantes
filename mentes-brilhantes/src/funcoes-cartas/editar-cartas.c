@@ -19,9 +19,12 @@ no baralho e da um alerta ao usuário.
 
 int editarCarta(TextBox *caixas_texto, int posicao, int super_trunfo)
 {
-    if ((strlen(caixas_texto[5].texto) > 0) && ((caixas_texto[5].texto[1] > 68) || (caixas_texto[5].texto[0] > 56) || (caixas_texto[5].texto[0] < 49)))
+    if ((strlen(caixas_texto[5].texto) != 2) && ((caixas_texto[5].texto[1] > 68) || (caixas_texto[5].texto[0] > 56) || (caixas_texto[5].texto[0] < 49)))
     {
-        return 2;
+        if (strlen(caixas_texto[5].texto) != 0)
+        {
+            return 2;
+        }
     } // Verifica se o hexadecimal esta nos conformes
 
     if (atoi(caixas_texto[1].texto) > 100 || atoi(caixas_texto[2].texto) > 100 || atoi(caixas_texto[3].texto) > 100 || atoi(caixas_texto[4].texto) > 999)
@@ -35,7 +38,7 @@ int editarCarta(TextBox *caixas_texto, int posicao, int super_trunfo)
         {
             return 3;
         }
-    } //Checa se já existe um super-trunfo no baralho e retorna o erro 3
+    } // Checa se já existe um super-trunfo no baralho e retorna o erro 3
 
     // Copiando os parametros para a nova carta - se a caixa for vazia mantem o estado atual:
     if (strcmp(caixas_texto[0].texto, "") != 0)
@@ -68,7 +71,7 @@ int editarCarta(TextBox *caixas_texto, int posicao, int super_trunfo)
         strcpy(cartas[posicao].hexadecimal, caixas_texto[5].texto);
     }
 
-    cartas[posicao].super_trunfo = super_trunfo; //Copia o campo super-trunfo
+    cartas[posicao].super_trunfo = super_trunfo; // Copia o campo super-trunfo
 
     for (int s = 0; s < 6; s++)
     {
@@ -76,5 +79,5 @@ int editarCarta(TextBox *caixas_texto, int posicao, int super_trunfo)
         caixas_texto[s].tamanho = 0;
     } // Limpa as caixas de texto ao serem usadas
 
-    return 0; //Retorno sem erros
+    return 0; // Retorno sem erros
 } // Fim função editarCarta
