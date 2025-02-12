@@ -129,7 +129,7 @@ void abrePdf()
         EndDrawing();
         for (int t = 0; t < 2; t++)
         {
-            desenharBotaoTxt(botoes_pdf[t]);
+            desenharBotaoTxt(&botoes_pdf[t]);
         } // Desenha todos os botões
 
         for (int u = 0; u < 2; u++)
@@ -149,9 +149,9 @@ void abrePdf()
         if (checarClique(&botoes_pdf[0].colisao))
         {
 #ifdef _WIN32
-            system("start ./data/instrucoes.pdf");
+            system("start ./data/manual.pdf");
 #elif __linux__
-            system("xdg-open ./data/instrucoes.pdf");
+            system("xdg-open ./data/manual.pdf");
 #else
             escreverLog("Sistema operacional não suportado. PDF não será aberto!");
 #endif
@@ -250,15 +250,21 @@ void checaSeletor(Seletor caixas[], int qtd__caixas_seletor, int grupo_seleciona
     return;
 } // Função que checa quais seletor estao selecionados pelo clique do usuário
 
-
-void resetarCartas(){
+void resetarCartas()
+{
 
     quantidade_cartas = 32;
 
     cartas = realloc(cartas, 32 * sizeof(Carta));
+    if (cartas == NULL)
+    {
+        perror("GAME: Erro ao realocar memória");
+        exit(1);
+    }
 
-    for(int s = 0; s < 32; s++){
+    for (int s = 0; s < 32; s++)
+    {
         cartas[s] = cartas_multiplayer[s];
     }
 
-} //Função que reseta cartas para as originais, usando as cartas do multiplayer que são as mesmas do banco original
+} // Função que reseta cartas para as originais, usando as cartas do multiplayer que são as mesmas do banco original

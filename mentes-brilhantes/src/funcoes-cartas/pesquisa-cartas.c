@@ -1,6 +1,6 @@
 /*
 -->PESQUISAR CARTAS<--
-Essa é a função auxiliar mais complexa do gerenciador, ela é responsavel por todo o submenu de 
+Essa é a função auxiliar mais complexa do gerenciador, ela é responsavel por todo o submenu de
 pesquisa, é ela que retorna um novo vetor de tamanho dinamico para o gerenciador e ele irá
 exibi-lo ao usuário.
 */
@@ -19,22 +19,22 @@ exibi-lo ao usuário.
 int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_radio, Carta **cartas_desenho)
 {
 
-    int total_cartas = 0; //Usado para contar quantas cartas ele acha durante a pesquisa
-    int caixas_vazias = 0; //Usado para ver se há ao menos uma caixa de texto preenchida para a pesquisa
+    int total_cartas = 0;  // Usado para contar quantas cartas ele acha durante a pesquisa
+    int caixas_vazias = 0; // Usado para ver se há ao menos uma caixa de texto preenchida para a pesquisa
 
-    *cartas_desenho = NULL; //Vetor de exibição da pesquisa, setado para NULL para iniciar as pesquisas
+    *cartas_desenho = NULL; // Vetor de exibição da pesquisa, setado para NULL para iniciar as pesquisas
 
     // Aplicando o filtro de caixas de texto:
     for (int i = 0; i < 5; i++)
     {
         if (strcmp(caixas_texto[i].texto, "") == 0 && super_trunfo == 0)
             caixas_vazias++;
-    } //Verifica se a caixa de texto é vazia, somente se super-trunfo é false, se for true há algo para verificar
+    } // Verifica se a caixa de texto é vazia, somente se super-trunfo é false, se for true há algo para verificar
 
     if (caixas_vazias == 5)
     {
         return -1;
-    } //Se as caixas forem vazias, retorna erro -1
+    } // Se as caixas forem vazias, retorna erro -1
     else
     {
         if (super_trunfo)
@@ -45,11 +45,16 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                 {
                     total_cartas++;
                     (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                    if (*cartas_desenho == NULL)
+                    {
+                        perror("GAME: Erro ao realocar memória");
+                        exit(1);
+                    }
                     (*cartas_desenho)[total_cartas - 1] = cartas[p];
                 }
             }
             return total_cartas;
-        } //Se for super-trunfo já procura a carta nessa parte e manda a carta para o gerenciador
+        } // Se for super-trunfo já procura a carta nessa parte e manda a carta para o gerenciador
 
         if (botoes_radio[0].estado)
         {
@@ -59,11 +64,16 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                 {
                     total_cartas++;
                     (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                    if (*cartas_desenho == NULL)
+                    {
+                        perror("GAME: Erro ao realocar memória");
+                        exit(1);
+                    }
                     (*cartas_desenho)[total_cartas - 1] = cartas[p];
                 }
             }
             return total_cartas;
-        } //Checa por nome, usando a função strstr para procura por fragmentos de texto
+        } // Checa por nome, usando a função strstr para procura por fragmentos de texto
 
         if (botoes_radio[1].estado)
         {
@@ -73,11 +83,16 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                 {
                     total_cartas++;
                     (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                    if (*cartas_desenho == NULL)
+                    {
+                        perror("GAME: Erro ao realocar memória");
+                        exit(1);
+                    }
                     (*cartas_desenho)[total_cartas - 1] = cartas[p];
                 }
             }
             return total_cartas;
-        } //Checa por range de curiosidade
+        } // Checa por range de curiosidade
 
         if (botoes_radio[2].estado)
         {
@@ -87,11 +102,16 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                 {
                     total_cartas++;
                     (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                    if (*cartas_desenho == NULL)
+                    {
+                        perror("GAME: Erro ao realocar memória");
+                        exit(1);
+                    }
                     (*cartas_desenho)[total_cartas - 1] = cartas[p];
                 }
             }
             return total_cartas;
-        } //Checa por range de criatividade
+        } // Checa por range de criatividade
 
         if (botoes_radio[3].estado)
         {
@@ -101,11 +121,16 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                 {
                     total_cartas++;
                     (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                    if (*cartas_desenho == NULL)
+                    {
+                        perror("GAME: Erro ao realocar memória");
+                        exit(1);
+                    }
                     (*cartas_desenho)[total_cartas - 1] = cartas[p];
                 }
             }
             return total_cartas;
-        } //Checa por range de inovação
+        } // Checa por range de inovação
 
         if (botoes_radio[4].estado)
         {
@@ -115,11 +140,16 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                 {
                     total_cartas++;
                     (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                    if (*cartas_desenho == NULL)
+                    {
+                        perror("GAME: Erro ao realocar memória");
+                        exit(1);
+                    }
                     (*cartas_desenho)[total_cartas - 1] = cartas[p];
                 }
             }
             return total_cartas;
-        } //Checa por range de idade
+        } // Checa por range de idade
 
         if (botoes_radio[5].estado)
         {
@@ -131,10 +161,15 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                     {
                         total_cartas++;
                         (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                        if (*cartas_desenho == NULL)
+                        {
+                            perror("GAME: Erro ao realocar memória");
+                            exit(1);
+                        }
                         (*cartas_desenho)[total_cartas - 1] = cartas[p];
                     }
                 }
-            } //Caso de ter as duas caixas com texto
+            } // Caso de ter as duas caixas com texto
             else if (strcmp(caixas_texto[3].texto, "") != 0)
             {
                 for (int p = 0; p < quantidade_cartas; p++)
@@ -143,10 +178,15 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                     {
                         total_cartas++;
                         (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                        if (*cartas_desenho == NULL)
+                        {
+                            perror("GAME: Erro ao realocar memória");
+                            exit(1);
+                        }
                         (*cartas_desenho)[total_cartas - 1] = cartas[p];
                     }
                 }
-            } //Caso de ter apenas a caixa de numero com texto
+            } // Caso de ter apenas a caixa de numero com texto
             else
             {
                 for (int p = 0; p < quantidade_cartas; p++)
@@ -155,15 +195,20 @@ int pesquisarCarta(TextBox *caixas_texto, int super_trunfo, RadioButton *botoes_
                     {
                         total_cartas++;
                         (*cartas_desenho) = realloc(*cartas_desenho, total_cartas * sizeof(Carta));
+                        if (*cartas_desenho == NULL)
+                        {
+                            perror("GAME: Erro ao realocar memória");
+                            exit(1);
+                        }
                         (*cartas_desenho)[total_cartas - 1] = cartas[p];
                     }
                 }
-            } //Caso de ter apenas a caixa de letra com texto
+            } // Caso de ter apenas a caixa de letra com texto
 
             return total_cartas;
 
-        } //Checa por hexadecimal
+        } // Checa por hexadecimal
 
-        return 0; //Retorno 0 cartas se não achar nada
+        return 0; // Retorno 0 cartas se não achar nada
     }
-} //Fim função pesquisarCarta
+} // Fim função pesquisarCarta

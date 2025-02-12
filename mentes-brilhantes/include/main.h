@@ -22,10 +22,7 @@ extern Color *cor_aleatoria; //Usada nas cores aleatorias do game
 extern Carta *cartas; // Cria o ponteiro do vetor de cartas para uso no singlePlayer e gerenciador
 extern Carta *cartas_multiplayer; // Cria o ponteiro do vetor de cartas para uso no multiplayer
 extern int botoes_resaltar; // Variavel usada para incicar para as funções de desenho, quantos botões precisam ser resaltados
-extern int id_master_saida; //USado para fechar seções em jogos multiplayers
+extern int id_master_saida; //Usado para fechar seções em jogos multiplayers
 extern char buffer[512]; //Usado para as funções do log
-
-// Funções
-Texture2D ResizeTexture(Texture2D texture, int newWidth, int newHeight);
 
 #endif //MAIN_H

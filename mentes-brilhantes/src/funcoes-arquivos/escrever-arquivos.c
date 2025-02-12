@@ -22,6 +22,7 @@ que é global e escrever nos arquivos, binário para uso do próprio jogo e csv 
 // FUNÇÕES DE .CSV:
 //---------------------------------
 
+//Função responsavel por exportar um arqivo csv de cartas usando o cartas como parametro:
 int exportarCsv()
 {
 
@@ -59,6 +60,8 @@ int exportarCsv()
     return 1;
 } // Fim exportarCsv
 
+
+//Função responsavel por iniciar o arquivo de log:
 void iniciarArquivoLog()
 {
     // Tenta abrir o arquivo:
@@ -77,6 +80,8 @@ void iniciarArquivoLog()
     exit(1);
 }
 
+
+//Função responsavel por colocar uma mensagem no arquivo de log, com hora e a informação:
 void escreverLog(char *texto)
 {
     // Obtem o tempo atual do sistema:
@@ -97,6 +102,8 @@ void escreverLog(char *texto)
 // ARQUIVOS BINÁRIOS:
 //---------------------------------
 
+
+//Função que salva os dados das cartas no bináio ao fechamento do jogo:
 void salvarDados(const char *nomeArquivo)
 {
 

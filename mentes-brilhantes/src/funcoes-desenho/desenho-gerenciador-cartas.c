@@ -1,4 +1,8 @@
-// FUNÇÕES DE DESENHO PARA A TELA DE GERENCIAMENTO DE CARTAS
+// FUNÇÕES DE DESENHO PARA A TELA DE GERENCIAMENTO DE CARTAS:
+
+//---------------------------------
+// INCLUDES
+//---------------------------------
 
 #include "main.h"
 #include "raylib.h"
@@ -13,30 +17,34 @@
 
 extern Vector2 posicao_mouse; // Chamada da variavel global posicao_mouse
 
-void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_botoes, Texture2D fundo, int submenu_tela, Texture2D seta, Texture2D frente_carta, int carta_atual, int total_cartas, Carta carta, Texture2D *img_carta, int exportou, int *retornos_funcoes, RadioButton botoes_radio[], int quantidade_botoes_radio, TextBox caixa_texto[], Seletor *caixas, TextBox caixa_texto_pesquisar[])
+//---------------------------------
+// DESENHO TELA LINUX E WINDOWS
+//---------------------------------
+
+void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_botoes, Texture2D *fundo, int *submenu_tela, Texture2D *seta, Texture2D *frente_carta, int *carta_atual, int *total_cartas, Carta *carta, Texture2D *img_carta, int *exportou, int *retornos_funcoes, RadioButton botoes_radio[], int quantidade_botoes_radio, TextBox caixa_texto[], Seletor *caixas, TextBox caixa_texto_pesquisar[])
 {
 
     BeginTextureMode(*target); // Tudo que for desenhado dessa função até EndTextureMode será automaticamente escalado
     ClearBackground(RAYWHITE); // Fundo da tela
 
-    DrawTexture(fundo, 0, 0, WHITE); // Desenha o fundo
+    DrawTexture(*fundo, 0, 0, WHITE); // Desenha o fundo
 
     DrawRectangleLinesEx((Rectangle){0, 275, 311, 325}, 3, BLACK); // Desenha um retangulo preto vazado para controles
 
-    DrawTexture(seta, 910, 255, WHITE);                                 // Desenha a seta da direita
-    DrawTextureEx(seta, (Vector2){400, 255 + 72}, 180.0f, 1.0f, WHITE); // Desenha a seta da esquerda
+    DrawTexture(*seta, 910, 255, WHITE);                                 // Desenha a seta da direita
+    DrawTextureEx(*seta, (Vector2){400, 255 + 72}, 180.0f, 1.0f, WHITE); // Desenha a seta da esquerda
 
-    desenhaCarta(500, 100, &frente_carta, &carta, img_carta); // Chama a função para desenhar a carta na posição x,y
+    desenhaCarta(500, 100, frente_carta, carta, img_carta); // Chama a função para desenhar a carta na posição x,y
 
     DrawRectangleLinesEx((Rectangle){320, 15, 160, 55}, 5, WHITE); // Desenha um retangulo branco para numero de cartas
-    DrawText(TextFormat("%d / %d", carta_atual, total_cartas), 333, 25, 35, WHITE);
+    DrawText(TextFormat("%d / %d", *carta_atual, *total_cartas), 333, 25, 35, WHITE);
 
-    if (submenu_tela == 4 && botoes_radio[5].estado != true)
+    if (*submenu_tela == 4 && botoes_radio[5].estado != true)
     {
         DrawText(TextFormat("de"), 142, 288, 27, BLACK);
     } // Desenha o "de" para caixas de valores
 
-    switch (submenu_tela)
+    switch (*submenu_tela)
     {
     case 1:
         incluir_adicionar(botoes_radio, quantidade_botoes_radio, 1, caixa_texto, caixas);
@@ -48,7 +56,7 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
         incluir_pesquisar(botoes_radio, quantidade_botoes_radio, 1, caixa_texto_pesquisar, caixas);
         break;
     case 5:
-        desenharBotaoTxt(&botoes[10], 1);
+        desenharBotaoTxt(&botoes[10]);
         incluir_listar();
         break;
     case 6:
@@ -64,22 +72,22 @@ void desenhoGerenciador(RenderTexture2D *target, Botao botoes[], int quantidade_
 
         if (t == 7 || t == 8 || t == 9)
         {
-            if (submenu_tela == 1)
+            if (*submenu_tela == 1)
             {
-                desenharBotaoTxt(botoes[7]);
+                desenharBotaoTxt(&botoes[7]);
             }
-            if (submenu_tela == 3)
+            if (*submenu_tela == 3)
             {
-                desenharBotaoTxt(botoes[8]);
+                desenharBotaoTxt(&botoes[8]);
             }
-            if (submenu_tela == 4)
+            if (*submenu_tela == 4)
             {
-                desenharBotaoTxt(botoes[9]);
+                desenharBotaoTxt(&botoes[9]);
             }
         }
         else
         {
-            desenharBotaoTxt(botoes[t]);
+            desenharBotaoTxt(&botoes[t]);
         }
 
     } // Desenha todos os botões - Nulos e normais
@@ -163,12 +171,12 @@ void incluir_listar()
     return;
 } // Função que desenha a listagem de cartas
 
-void incluir_exportar(int exportou)
+void incluir_exportar(int *exportou)
 {
 
     DrawRectangleLinesEx((Rectangle){4, 280, 302, 182}, 4, NOSSO_AMARELO);
 
-    if (exportou == 1)
+    if (*exportou == 1)
     {
         DrawText(TextFormat("Cartas"), 94, 293, 35, NOSSO_AMARELO);
         DrawText(TextFormat("Exportadas"), 63, 331, 35, NOSSO_AMARELO);

@@ -13,11 +13,10 @@ ifeq ($(OS),Windows_NT)
     RC_FILE = ./resources.rc
     RES_OBJ = resources.o
 else
-    INCLUDE = -I./include/
+    INCLUDE = -I./include/ -L./lib
     EXTRA_FLAGS = -Wall -Werror -Wextra -std=c99 -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
     BIN = ./mentes-brilhantes
 endif
-
 
 #Encontrar todos os arquivos .c recursivamente:
 SRC = $(shell find . -name "*.c")
@@ -54,7 +53,7 @@ $(BIN): $(SRC)
 	@gcc $(SRC) -g $(EXTRA_FLAGS) $(INCLUDE) -o $(BIN)
 endif
 
-#Regra para compilar o arquivo de recursos no Windows:
+#Regra para compilar o arquivo de recursos no Windows para imagem do exec:
 ifeq ($(OS),Windows_NT)
 $(RES_OBJ): $(RC_FILE)
 	windres $(RC_FILE) -o $(RES_OBJ)
@@ -67,26 +66,26 @@ run: all
 	@echo ""
 	$(BIN)
 
-#Limpeza de arquivos binários e executáveis, e objetos do windows:
+#Limpeza de arquivos binarios e executaveis, e objetos do windows:
 clean:
-	@echo "Removendo arquivos executáveis e binários antigos!"
+	@echo "Removendo arquivos executaveis e binarios antigos!"
 	$(RM) $(BIN)
-	$(RM) -f ./data/cartas.bin
-	$(RM) -f ./Cartas.csv
-	$(RM) -f ./data/log.txt
+	$(RM) ./data/cartas.bin
+	$(RM) ./Cartas.csv
+	$(RM) ./data/log.txt
 ifeq ($(OS),Windows_NT)
-	$(RM) -f $(RES_OBJ)
+	$(RM) $(RES_OBJ)
 endif
-	@echo "Limpeza concluída!"
+	@echo "Limpeza concluida!"
 
 #Função para depurar:
 debug: all
 	@echo ""
-	@echo "Iniciando em modo de depuração..."
+	@echo "Iniciando em modo de depuracao..."
 	@echo ""
 	gdb $(BIN)
 
-#Exibe uma ajuda para o usuário:
+#Exibe uma ajuda para o usuario:
 help:
 	@echo ""
 	@echo "--> HELP MENTES BRILHANTES <--"
@@ -97,17 +96,17 @@ help:
 	@echo ""
 	@echo "Windows -> Compilador GCC de arquiquetura 64 bits e com ele será instalado os pacotes do MakeFile. Linux -> Por padrão ele já vem com o compilador correto, mas atualizar as bibliotecas graficas é nescessário e não ter conflitos da raylib presente nesse jogo, com uma préviamente baixada."
 	@echo ""
-	@echo "OPÇÕES do Make:"
+	@echo "OPCOES do Make:"
 	@echo ""
 	@echo "make -> Apenas compila o jogo"
 	@echo ""
-	@echo "make run -> Compila o jogo para o SO do windows ou linux (AUTOMÁTICO) e executa o jogo"
+	@echo "make run -> Compila o jogo para o SO do windows ou linux (AUTOMATICO) e executa o jogo"
 	@echo ""
-	@echo "make clean -> Remove arquivos executáveis antigos e BINs temporários"
+	@echo "make clean -> Remove arquivos executaveis antigos e BINs temporarios"
 	@echo ""
-	@echo "make exec -> Executa a limpeza do clean, a compilação do make e o comando run"
+	@echo "make exec -> Executa a limpeza do clean, a compilacao do make e o comando run"
 	@echo ""
-	@echo "make debug -> Compila o jopo para modo de depuração, ou seja, iniciando o GDB"
+	@echo "make debug -> Compila o jopo para modo de depuracao, ou seja, iniciando o GDB"
 	@echo ""
 
 
@@ -115,4 +114,4 @@ exec:
 	make clean;
 	make run;
 
-.PHONY: all run clean debug help
+.PHONY: all run clean debug exec help

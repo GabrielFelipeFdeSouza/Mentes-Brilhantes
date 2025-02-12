@@ -56,28 +56,28 @@ Rectangle criarBotao(Botao *botao, int x, int y, Color cor_fundo, char texto[], 
     return colisao_botao;
 }
 
-void desenharBotaoTxt(Botao botao)
+void desenharBotaoTxt(Botao *botao)
 {
-    if (CheckCollisionPointRec(posicao_mouse, botao.colisao) && !coresIguais(botao.cor_botao, GREEN))
+    if (CheckCollisionPointRec(posicao_mouse, (*botao).colisao) && !coresIguais((*botao).cor_botao, GREEN))
     {
-        botao.cor_botao = NOSSO_CIANO;
+        (*botao).cor_botao = NOSSO_CIANO;
     }
-    else if (!coresIguais(botao.cor_botao, GREEN))
+    else if (!coresIguais((*botao).cor_botao, GREEN))
     {
-        botao.cor_botao = NOSSO_AZUL;
+        (*botao).cor_botao = NOSSO_AZUL;
     }
-    DrawRectangle(-4 + botao.colisao.x, -4 + botao.colisao.y, 8 + botao.colisao.width, 8 + botao.colisao.height, NOSSO_AMARELO);
-    DrawRectangle(botao.colisao.x, botao.colisao.y, botao.colisao.width, botao.colisao.height, botao.cor_botao);
-    DrawText(botao.texto, (2 * botao.colisao.x + botao.colisao.width - MeasureText(botao.texto, botao.tamanho_fonte_texto)) * 0.5, ((2 * botao.colisao.y + botao.colisao.height - botao.tamanho_fonte_texto) * 0.5), botao.tamanho_fonte_texto, botao.cor_texto);
+    DrawRectangle(-4 + (*botao).colisao.x, -4 + (*botao).colisao.y, 8 + (*botao).colisao.width, 8 + (*botao).colisao.height, NOSSO_AMARELO);
+    DrawRectangle((*botao).colisao.x, (*botao).colisao.y, (*botao).colisao.width, (*botao).colisao.height, (*botao).cor_botao);
+    DrawText((*botao).texto, (2 * (*botao).colisao.x + (*botao).colisao.width - MeasureText((*botao).texto, (*botao).tamanho_fonte_texto)) * 0.5, ((2 * (*botao).colisao.y + (*botao).colisao.height - (*botao).tamanho_fonte_texto) * 0.5), (*botao).tamanho_fonte_texto, (*botao).cor_texto);
 
     return;
 }
 
-void desenharBotaoNulo(BotaoNulo botao)
+void desenharBotaoNulo(BotaoNulo *botao)
 {
 
-    DrawRectangle(-4 + botao.colisao.x, -4 + botao.colisao.y, 8 + botao.colisao.width, 8 + botao.colisao.height, NOSSO_AMARELO);
-    DrawRectangle(botao.colisao.x, botao.colisao.y, botao.colisao.width, botao.colisao.height, botao.cor_botao);
+    DrawRectangle(-4 + (*botao).colisao.x, -4 + (*botao).colisao.y, 8 + (*botao).colisao.width, 8 + (*botao).colisao.height, NOSSO_AMARELO);
+    DrawRectangle((*botao).colisao.x, (*botao).colisao.y, (*botao).colisao.width, (*botao).colisao.height, (*botao).cor_botao);
 
     return;
 }
@@ -85,22 +85,24 @@ void desenharBotaoNulo(BotaoNulo botao)
 void desenhaCarta(int x, int y, Texture2D *frente_carta, Carta *carta, Texture2D *img_carta)
 {
 
-    DrawRectangle(x + 15, y + 45, 260, 175, NOSSO_CREME);
+    DrawRectangle(x + 15, y + 45, 260, 175, NOSSO_CREME); // Desenha o fundo da imagem
 
-    DrawTextureEx(*img_carta, (Vector2){x + 61, y + 53}, 0.0f, 1.75f, WHITE);
+    DrawTextureEx(*img_carta, (Vector2){x + 61, y + 53}, 0.0f, 1.75f, WHITE); // Desenha o rosto da carta
 
-    DrawTextureEx(*frente_carta, (Vector2){x, y}, 0.0f, 1.75f, WHITE); // Desenha a carta
+    DrawTextureEx(*frente_carta, (Vector2){x, y}, 0.0f, 1.75f, WHITE); // Desenha o frame da carta
 
     for (int t = 0; t < 4; t++)
     {
-        DrawRectangle(x + 21, y + 244 + t * 45, 244, 35, NOSSO_BEGE);
+        DrawRectangle(x + 21, y + 244 + t * 45, 244, 35, NOSSO_BEGE); // Desenhando os fundos dos atributos
     }
 
     if (carta->hexadecimal[0] == '9' && carta->hexadecimal[1] == 'Z')
     {
         DrawText(TextFormat("SEM CARTAS QUE", carta->inovacao), x + 25, y + 100, 26, RED);
         DrawText(TextFormat("CORRESPONDEM!", carta->inovacao), x + 30, y + 129, 26, RED);
-    }
+    } // Para cartas vazias do gerenciador - pesquisar
+
+    // Desenha os parametros e o hexadecimal:
 
     DrawText(TextFormat("CURIOSIDADE: %d", carta->curiosidade), x + 25, y + 251, 25, BLUE);
     DrawText(TextFormat("CRIATIVIDADE: %d", carta->criatividade), x + 25, y + 296, 25, DARKGREEN);
@@ -164,11 +166,11 @@ int btnsCartasClicados(int x, int y)
         {
             return s;
         }
-    }
+    } //Se clicar em algum dos botões retorna o botão corelativo
 
-    return -1;
+    return -1; //Se não clicou em nada
 
-} // Desenha e checa os botoes das cartas
+} // Desenha e checa os botoes das cartas, para os modos de jogo, sem a nescessidade de criar de fato um tipo de botão
 
 void desenhoRedimensionado(RenderTexture2D *target)
 {
@@ -193,7 +195,7 @@ void desenhoRedimensionado(RenderTexture2D *target)
     return;
 }
 
-void telaErro(char txt_erro[255])
+void telaErro(char txt_erro[])
 {
 
     InitWindow(COMPRIMENTO_TELA, ALTURA_TELA, "Mentes Brilhantes - ERRO"); // Inicialização da tela de erro
@@ -264,7 +266,7 @@ void resaltaRadioButton(RadioButton botoes[], int quantidade_botoes, int grupo_s
 
 void desenhaTextBox(TextBox *caixa_texto)
 {
-    static int contador_frame = 0;
+    static int contador_frame = 0; // Usado animação do ponteiro da caixa ativa
 
     if (caixa_texto->habilitado)
     {
@@ -284,8 +286,8 @@ void desenhaTextBox(TextBox *caixa_texto)
             {
                 DrawText("|", caixa_texto->caixa.x + 13 + MeasureText(caixa_texto->texto, 25), ((2 * caixa_texto->caixa.y + caixa_texto->caixa.height - 25) * 0.5), 25, caixa_texto->cor_texto);
             }
-        }
-    }
+        } //Verifica se o placeholder esta ativo e desenha ele, se não desenha o conteudo da caixa
+    } // Desenha a caixa se habilitada
 
     if (contador_frame > 180)
     {
@@ -331,15 +333,24 @@ void resaltaBotoes()
 {
     if (botoes_resaltar == 1)
     {
-        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND); // Clicavel
     }
     else if (botoes_resaltar == 0)
     {
-        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT); // Normal
     }
     else if (botoes_resaltar == 2)
     {
-        SetMouseCursor(MOUSE_CURSOR_NOT_ALLOWED);
+        SetMouseCursor(MOUSE_CURSOR_NOT_ALLOWED); // Proibido
     }
     return;
-}
+} // Função que troca o tipo de cursor, aliado ao ressaltar dos botões
+
+Texture2D ResizeTexture(Texture2D texture, int novoComprimento, int novaLargura)
+{
+    Image image = LoadImageFromTexture(texture);        // Obtem a imagem da textura
+    ImageResize(&image, novoComprimento, novaLargura);  // Redimensiona a imagem
+    Texture2D newTexture = LoadTextureFromImage(image); // Cria uma nova textura a partir da imagem redimensionada
+    UnloadImage(image);                                 // Libera a imagem temporária
+    return newTexture;
+} // Função para redimensionar a textura (Imagens)

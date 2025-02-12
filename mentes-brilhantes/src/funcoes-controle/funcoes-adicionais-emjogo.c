@@ -2,7 +2,9 @@
 -->FUNÇÕES ADICIONAIS EM JOGO<--
 Funções básicas reultilizaveis para as partes dos controles dos jogos,
 aqui todas as partes de processamentos e analizes das coisas que ocorrem
-durante o jogo são feitas.*/
+durante o jogo são feitas. Parte dessas funções só funcionam para o multiplayer
+e nesse caso tem uma guarda de compilação que permite que apenas compile essas
+se for windows, a maioria das funções servem para ambos os tipos de modos.*/
 
 //---------------------------------
 // INCLUDES
@@ -29,7 +31,7 @@ durante o jogo são feitas.*/
 // FUNÇOES ADICIONAIS
 //---------------------------------
 
-// Função que é chamada no inicio de cada jogo, preparando para jogar
+// Função que é chamada no inicio de cada jogo com bot, preparando para jogar:
 void iniciar_jogo_bot(Carta **cartas_bot, Carta **cartas_jogador, int quantidades_cartas[2])
 {
 
@@ -57,6 +59,11 @@ void iniciar_jogo_bot(Carta **cartas_bot, Carta **cartas_jogador, int quantidade
             // Copia vetor cartas para o bot:
             quantidades_cartas[0]++;
             *cartas_bot = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+            if (*cartas_bot == NULL)
+            {
+                perror("GAME: Erro ao realocar memória");
+                exit(1);
+            }
             (*cartas_bot)[quantidades_cartas[0] - 1] = cartas[cartas_escolhidas[k]];
         }
         else
@@ -64,6 +71,11 @@ void iniciar_jogo_bot(Carta **cartas_bot, Carta **cartas_jogador, int quantidade
             // Copia vetor cartas para o jogador:
             quantidades_cartas[1]++;
             *cartas_jogador = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+            if (*cartas_jogador == NULL)
+            {
+                perror("GAME: Erro ao realocar memória");
+                exit(1);
+            }
             (*cartas_jogador)[quantidades_cartas[1] - 1] = cartas[cartas_escolhidas[k]];
         }
     } // For que copia as informações das cartas aleatorias geradas para cada baralho, atualizando tambem a quantidade de cartas
@@ -71,7 +83,7 @@ void iniciar_jogo_bot(Carta **cartas_bot, Carta **cartas_jogador, int quantidade
     return;
 } // Função que prepara o jogo para iniciar
 
-// Função que a cada final de rodada é chamada para verificar as condições de vitória de cada rodada:
+// Função que a cada final de rodada é chamada para verificar as condições de vitória de cada rodada, multi modo:
 void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta **pilha_empate, int *quantidades_cartas, int tipo)
 {
     Carta temporaria; // Usada para copiar as informações da primeira carta
@@ -89,12 +101,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[1]++;                                                                      // Aumenta o vetor de cartas do jogador
                 quantidades_cartas[0]--;                                                                      // Diminui o vetor de cartas do bot
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta)); // Realoca o vetor de cartas do jogador
-                (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];                              // Copia carta perdida do bot para o baralho do player
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                } // Checa erros de memória
+                (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0]; // Copia carta perdida do bot para o baralho do player
                 for (int u = 0; u < quantidades_cartas[0]; u++)
                 {
                     (*cartas_bot)[u] = (*cartas_bot)[u + 1];
                 } // Ajusta as cartas do bot para ele perder a primeira carta
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta)); // Realoca o baralho do bot para ficar no tamanho correto
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_jogador)[0]; // Usa a carta temporaria para colocar a carta da mão do player no fim do baralho
                 for (int u = 0; u < quantidades_cartas[1]; u++)
@@ -110,12 +132,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[0]++;
                 quantidades_cartas[1]--;
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
                 {
                     (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
                 }
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
@@ -135,12 +167,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[0]++;
                 quantidades_cartas[1]--;
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
                 {
                     (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
                 }
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
@@ -156,12 +198,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[1]++;
                 quantidades_cartas[0]--;
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
                 {
                     (*cartas_bot)[u] = (*cartas_bot)[u + 1];
                 }
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
@@ -189,12 +241,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[1]++;
                 quantidades_cartas[0]--;
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
                 {
                     (*cartas_bot)[u] = (*cartas_bot)[u + 1];
                 }
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
@@ -211,12 +273,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[0]++;
                 quantidades_cartas[1]--;
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
                 {
                     (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
                 }
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
@@ -241,12 +313,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[1]++;
                 quantidades_cartas[0]--;
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
                 {
                     (*cartas_bot)[u] = (*cartas_bot)[u + 1];
                 }
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
@@ -263,12 +345,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[0]++;
                 quantidades_cartas[1]--;
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
                 {
                     (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
                 }
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
@@ -292,12 +384,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[1]++;
                 quantidades_cartas[0]--;
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
                 {
                     (*cartas_bot)[u] = (*cartas_bot)[u + 1];
                 }
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
@@ -314,12 +416,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[0]++;
                 quantidades_cartas[1]--;
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
                 {
                     (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
                 }
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
@@ -344,12 +456,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[1]++;
                 quantidades_cartas[0]--;
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_jogador)[quantidades_cartas[1] - 1] = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
                 {
                     (*cartas_bot)[u] = (*cartas_bot)[u + 1];
                 }
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
@@ -366,12 +488,22 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
                 quantidades_cartas[0]++;
                 quantidades_cartas[1]--;
                 (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+                if (*cartas_bot == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
                 (*cartas_bot)[quantidades_cartas[0] - 1] = (*cartas_jogador)[0];
                 for (int u = 0; u < quantidades_cartas[1]; u++)
                 {
                     (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
                 }
                 (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+                if (*cartas_jogador == NULL)
+                {
+                    perror("GAME: Erro ao realocar memória");
+                    exit(1);
+                }
 
                 temporaria = (*cartas_bot)[0];
                 for (int u = 0; u < quantidades_cartas[0]; u++)
@@ -396,31 +528,10 @@ void clicado(int *btn_clicado, Carta **cartas_bot, Carta **cartas_jogador, Carta
 
     *btn_clicado = -1; // Reset do botão para a próxima jogada
 
-    printf("\nBARALHO BOT/PLAYER2:\n\n");
-
-    for (int s = 0; s < quantidades_cartas[0]; s++)
-    {
-        printf("%s\n", (*cartas_bot)[s].nome);
-    }
-
-    printf("\nBARALHO PLAYER/PLAYER1:\n\n");
-
-    for (int s = 0; s < quantidades_cartas[1]; s++)
-    {
-        printf("%s\n", (*cartas_jogador)[s].nome);
-    }
-
-    printf("\nBARALHO EMPATE:\n\n");
-
-    for (int s = 0; s < quantidades_cartas[2]; s++)
-    {
-        printf("%s\n", (*pilha_empate)[s].nome);
-    }
-
     return;
 } // Função que trata das condições de ganho de cada rodada
 
-// Função que trata do empate ocorrido
+// Função que trata do empate ocorrido, multi modo:
 void empate(Carta **cartas_bot, Carta **cartas_jogador, Carta **pilha_empate, int *quantidades_cartas, int tipo)
 {
     quantidades_cartas[2]++; // Incrementa o contador de referencia para a alocacao dinamica em casos
@@ -433,6 +544,11 @@ void empate(Carta **cartas_bot, Carta **cartas_jogador, Carta **pilha_empate, in
     {
         // Realoca conforme a quantidade de empates seguidos
         (*pilha_empate) = (Carta *)realloc(*pilha_empate, (2 * quantidades_cartas[2]) * sizeof(Carta));
+        if (*pilha_empate == NULL)
+        {
+            perror("GAME: Erro ao realocar memória");
+            exit(1);
+        }
     }
 
     if (tipo == 1)
@@ -455,17 +571,27 @@ void empate(Carta **cartas_bot, Carta **cartas_jogador, Carta **pilha_empate, in
         (*cartas_bot)[u] = (*cartas_bot)[u + 1];
     }
     (*cartas_bot) = (Carta *)realloc(*cartas_bot, quantidades_cartas[0] * sizeof(Carta));
+    if (*cartas_bot == NULL)
+    {
+        perror("GAME: Erro ao realocar memória");
+        exit(1);
+    }
 
     for (int u = 0; u < quantidades_cartas[1]; u++)
     {
         (*cartas_jogador)[u] = (*cartas_jogador)[u + 1];
     }
     (*cartas_jogador) = (Carta *)realloc(*cartas_jogador, quantidades_cartas[1] * sizeof(Carta));
+    if (*cartas_jogador == NULL)
+    {
+        perror("GAME: Erro ao realocar memória");
+        exit(1);
+    }
 
     return;
 } // Função que trata dos casos de empate
 
-// Função que coloca as cartas de empate nas cartas do ganhador da rodada de desempate
+// Função que coloca as cartas de empate nas cartas do ganhador da rodada de desempate, multi modo:
 void distribuiPilha(Carta **cartas_merecedor, int *qtd_cartas_merecedor, Carta **pilha_empate, int *quantidades_cartas)
 {
 
@@ -473,7 +599,11 @@ void distribuiPilha(Carta **cartas_merecedor, int *qtd_cartas_merecedor, Carta *
     {
         *qtd_cartas_merecedor += 2 * quantidades_cartas[2];                                                 // Aumenta as cartas do vencedor nas que estão no monte
         (*cartas_merecedor) = (Carta *)realloc(*cartas_merecedor, (*qtd_cartas_merecedor) * sizeof(Carta)); // Realoca o baralho do vencedor
-
+        if (*cartas_merecedor == NULL)
+        {
+            perror("GAME: Erro ao realocar memória");
+            exit(1);
+        }
         for (int i = 0; i < (2 * quantidades_cartas[2]); i++)
         {
             (*cartas_merecedor)[(*qtd_cartas_merecedor - i - 1)] = (*pilha_empate)[i]; // Coloca a pilha dentro das cartas de quem ganhou
@@ -485,7 +615,7 @@ void distribuiPilha(Carta **cartas_merecedor, int *qtd_cartas_merecedor, Carta *
     return;
 } // Funcao que distribui as cartas da pilha de empate quando alguem ganhar
 
-// Função que simula uma IA para as escolhas do bot baseado na dificuldade
+// Função que simula uma IA para as escolhas do bot baseado na dificuldade:
 int iaBot(Carta *cartas_bot, int dificuldade)
 {
 
@@ -584,13 +714,13 @@ int iaBot(Carta *cartas_bot, int dificuldade)
     }
 
     // Randomizar entre os valores restantes:
-    int escolha_aleatoria = rand() % j; // Randomiza entre 0 e j-1
+    int escolha_aleatoria = rand() % j; // Randomiza entre 0 e j
 
     return candidatos[escolha_aleatoria];
 
 } // Função que simula uma ia de escolhas do bot baseado na dificuldade
 
-// Função que verifica se alguem ganhou o jogo, se sim ativa os triggers do submenu para isso
+// Função que verifica se alguem ganhou o jogo, se sim ativa os triggers do submenu para isso:
 void checaVitoria(int *quantidades_cartas, int *submenu_tela)
 {
     if (quantidades_cartas[0] == 0)
@@ -633,6 +763,11 @@ void criarNovaSala(Carta **cartas_jogador1, Carta **cartas_jogador2, int quantid
             // Copia vetor cartas para o jogador1:
             quantidades_cartas[0]++;
             *cartas_jogador1 = (Carta *)realloc(*cartas_jogador1, quantidades_cartas[0] * sizeof(Carta));
+            if (*cartas_jogador1 == NULL)
+            {
+                perror("GAME: Erro ao realocar memória");
+                exit(1);
+            }
             (*cartas_jogador1)[quantidades_cartas[0] - 1] = cartas_multiplayer[cartas_escolhidas[k]];
         }
         else
@@ -640,6 +775,11 @@ void criarNovaSala(Carta **cartas_jogador1, Carta **cartas_jogador2, int quantid
             // Copia vetor cartas para o jogador2:
             quantidades_cartas[1]++;
             *cartas_jogador2 = (Carta *)realloc(*cartas_jogador2, quantidades_cartas[1] * sizeof(Carta));
+            if (*cartas_jogador2 == NULL)
+            {
+                perror("GAME: Erro ao realocar memória");
+                exit(1);
+            }
             (*cartas_jogador2)[quantidades_cartas[1] - 1] = cartas_multiplayer[cartas_escolhidas[k]];
         }
     } // For que copia as informações das cartas aleatorias geradas para cada baralho, atualizando tambem a quantidade de cartas
@@ -676,6 +816,11 @@ void EntrarSala(Carta **cartas_jogador1, Carta **cartas_jogador2, int quantidade
             // Copia vetor cartas para o jogador1:
             quantidades_cartas[0]++;
             *cartas_jogador1 = (Carta *)realloc(*cartas_jogador1, quantidades_cartas[0] * sizeof(Carta));
+            if (*cartas_jogador1 == NULL)
+            {
+                perror("GAME: Erro ao realocar memória");
+                exit(1);
+            }
             (*cartas_jogador1)[quantidades_cartas[0] - 1] = cartas_multiplayer[cartas_escolhidas[k]];
         }
         else
@@ -683,6 +828,11 @@ void EntrarSala(Carta **cartas_jogador1, Carta **cartas_jogador2, int quantidade
             // Copia vetor cartas para o jogador2:
             quantidades_cartas[1]++;
             *cartas_jogador2 = (Carta *)realloc(*cartas_jogador2, quantidades_cartas[1] * sizeof(Carta));
+            if (*cartas_jogador2 == NULL)
+            {
+                perror("GAME: Erro ao realocar memória");
+                exit(1);
+            }
             (*cartas_jogador2)[quantidades_cartas[1] - 1] = cartas_multiplayer[cartas_escolhidas[k]];
         }
     } // For que copia as informações das cartas aleatorias geradas para cada baralho, atualizando tambem a quantidade de cartas

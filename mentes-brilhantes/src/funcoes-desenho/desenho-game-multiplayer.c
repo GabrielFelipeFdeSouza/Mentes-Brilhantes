@@ -16,7 +16,7 @@
 #include <math.h>
 #include <stdbool.h>
 
-void desenhaJogoMultiplayer(RenderTexture2D *target, Botao *botoes, Texture2D fundo, int sub_menu, int server_conection, TextBox *caixa_texto, int *erros, int id_sala, int *contador_tempo, int quantidades_cartas[3], Texture2D fundo_carta, Texture2D frente_carta, Carta carta1, Carta carta2, Texture2D img_carta, Texture2D img_carta_player2, int btn_clicado, char *nome_player1, char *nome_player2, int vez_jogar, int tipo_jogo)
+void desenhaJogoMultiplayer(RenderTexture2D *target, Botao *botoes, Texture2D fundo, int sub_menu, int conexao_server, TextBox *caixa_texto, int *erros, int id_sala, int *contador_tempo, int quantidades_cartas[3], Texture2D fundo_carta, Texture2D frente_carta, Carta carta1, Carta carta2, Texture2D *img_carta, Texture2D *img_carta_player2, int btn_clicado, char *nome_player1, char *nome_player2, int vez_jogar, int tipo_jogo)
 {
     BeginTextureMode(*target);       // Tudo que for desenhado dessa função até EndTextureMode será automaticamente escalado
     ClearBackground(BLUE);           // Fundo da tela
@@ -41,7 +41,7 @@ void desenhaJogoMultiplayer(RenderTexture2D *target, Botao *botoes, Texture2D fu
     switch (sub_menu)
     {
     case 0:
-        incluir_menu11(server_conection);
+        incluir_menu11(conexao_server);
         break;
 
     case 1:
@@ -74,15 +74,15 @@ void desenhaJogoMultiplayer(RenderTexture2D *target, Botao *botoes, Texture2D fu
         break;
     }
 
-    desenharBotaoTxt(botoes[0], 1);
+    desenharBotaoTxt(&botoes[0]);
     // DrawText(TextFormat("Posição do mouse: (%.2f,%.2f) - FPS: %d", posicao_mouse.x, posicao_mouse.y, GetFPS()), 1, 1, 20, RED);
 
-    if (sub_menu == 0 && server_conection == 1)
+    if (sub_menu == 0 && conexao_server == 1)
     {
-        desenharBotaoTxt(botoes[1], 1);
-        desenharBotaoTxt(botoes[2], 1);
-        desenhaTextBox(caixa_texto[0]);
-        desenhaTextBox(caixa_texto[1]);
+        desenharBotaoTxt(&botoes[1]);
+        desenharBotaoTxt(&botoes[2]);
+        desenhaTextBox(&caixa_texto[0]);
+        desenhaTextBox(&caixa_texto[1]);
     }
 
     if (sub_menu == 0 && erros[0] < 220)
@@ -136,16 +136,16 @@ void desenhaJogoMultiplayer(RenderTexture2D *target, Botao *botoes, Texture2D fu
     return;
 }
 
-void incluir_menu11(int server_conection)
+void incluir_menu11(int conexao_server)
 {
     DrawText(TextFormat("JOGO MULTIPLAYER:"), 306, 3, 37, WHITE);
     DrawText(TextFormat("JOGO MULTIPLAYER:"), 308, 5, 37, BLACK);
 
-    if (server_conection == 0)
+    if (conexao_server == 0)
     {
         DrawText(TextFormat("CONETANDO AO SERVIDOR DO JOGO..."), 120, 260, 42, WHITE);
     }
-    else if (server_conection == 1)
+    else if (conexao_server == 1)
     {
         DrawText(TextFormat("CONECTADO AO SERVIDOR!"), 12, 570, 23, WHITE);
     }
@@ -200,9 +200,9 @@ void desenhaJogoMultiplayerLinux(RenderTexture2D *target, Botao *botao, Texture2
     ClearBackground(BLUE);           // Fundo da tela
     DrawTexture(fundo, 0, 0, WHITE); // Desenha o fundo
 
-    desenharBotaoTxt(*botao, 1);
+    desenharBotaoTxt(botao);
 
-    DrawText(TextFormat("A funcionalidade do jogo multiplayer está \n\n\n\ndisponivel apenas para usuários Windows!"), 30, 250, 44, WHITE);
+    DrawText(TextFormat("A funcionalidade do jogo multiplayer está \n\ndisponivel apenas para usuários Windows!"), 40, 225, 44, WHITE);
 
     resaltaBotoes();
 

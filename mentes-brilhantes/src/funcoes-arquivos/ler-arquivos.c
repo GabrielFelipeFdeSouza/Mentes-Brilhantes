@@ -17,6 +17,7 @@ os comandos da main.
 #include "structs-gerais.h"
 #include <string.h>
 #include "escrever-arquivos.h"
+#include "desenho-geral.h"
 
 //---------------------------------
 //--FUNÇÕES DO ARQ .CSV:
@@ -27,11 +28,11 @@ int carregarDadosCSV(const char *nomeArquivo)
 {
 
     // Variaveis:
-    const int max_linhas = 512; // Maximo de linhas que são lidas do arquivo
-    char linha[max_linhas];     // Char para ler e armazenar cada linha e depois processa-la
-    int capacidade = 64;        // Capacidade inicial do array de
-    int tamanho = 0;            // Contagem das linhas lidas do arquivo
-    char super_trunfo[6];       // Para uso se é supertrunfo durante a leitura
+    int max_linha = 512;   // Maximo de linhas que são lidas do arquivo
+    char linha[max_linha]; // Char para ler e armazenar cada linha e depois processa-la
+    int capacidade = 64;   // Capacidade inicial do array de
+    int tamanho = 0;       // Contagem das linhas lidas do arquivo
+    char super_trunfo[6];  // Para uso se é supertrunfo durante a leitura
 
     // Abre o arquivo:
     FILE *arquivo = fopen(nomeArquivo, "r");
@@ -50,7 +51,7 @@ int carregarDadosCSV(const char *nomeArquivo)
     } // Aloca o vetor de cartas inicialmente para 64 - se houver mais o realoc trata
 
     // Le cada linha do arquivo:
-    while (fgets(linha, max_linhas, arquivo))
+    while (fgets(linha, max_linha, arquivo))
     {
         if (tamanho >= capacidade)
         {
@@ -77,21 +78,23 @@ int carregarDadosCSV(const char *nomeArquivo)
     return tamanho;  // Manda a quantidade de cartas do arquivo
 } // fim carregarDadosCSV
 
+// Função que le as cartas usado no multiplayer e no reset do gerenciador:
 void lerCartasMultiplayer()
 {
 
     // Variaveis:
-    const int max_linhas = 512; // Maximo de linhas que são lidas do arquivo
-    char linha[max_linhas];     // Char para ler e armazenar cada linha e depois processa-la
-    int capacidade = 32;        // Capacidade inicial do array de
-    char super_trunfo[6];       // Para uso se é supertrunfo durante a leitura
+    int max_linha = 512;   // Maximo de linhas que são lidas do arquivo
+    char linha[max_linha]; // Char para ler e armazenar cada linha e depois processa-la
+    int capacidade = 32;   // Capacidade inicial do array de
+    char super_trunfo[6];  // Para uso se é supertrunfo durante a leitura
     int tamanho = 0;
 
     // Abre o arquivo:
     FILE *arquivo = fopen("./data/banco.csv", "r");
     if (arquivo == NULL)
     {
-        perror("GAME: Erro ao abrir o arquivo de cartas do multiplayer!");
+        telaErro("Erro ao ler cartas do arquivo CSV para o multiplayer!");
+        tela = 11;
         return;
     } // Verifica se o arquivo existe e abre-o
 
@@ -106,7 +109,7 @@ void lerCartasMultiplayer()
     } // Aloca o vetor de cartas inicialmente para 64 - se houver mais o realoc trata
 
     // Le cada linha do arquivo:
-    while (fgets(linha, max_linhas, arquivo))
+    while (fgets(linha, max_linha, arquivo))
     {
         // A cada linha lida quebra o txt em pedaços e salva no c para ser enviado para cartas:
         Carta c;

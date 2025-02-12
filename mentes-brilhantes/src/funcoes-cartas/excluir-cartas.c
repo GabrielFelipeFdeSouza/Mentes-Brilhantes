@@ -26,6 +26,11 @@ void excluirCarta(int id_excluir)
 
     cartas = (Carta*) realloc(cartas, (quantidade_cartas-1) * sizeof(Carta)); //Realoca o vetor de cartas para menos um de tamanho
 
+    if(cartas == NULL){
+        perror("GAME: Erro ao realocar memória");
+        exit(1);
+    }
+
     return;
 } //Fim função excluirCarta
 

@@ -31,13 +31,13 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
 
     // Definindo os botões do menu:
     Botao botoes_menu[5]; // Declara todos os botões da tela de menu
-    BotaoNulo botao_menu_som[1];
     botoes_menu[0].colisao = criarBotao(&botoes_menu[0], 42, 525, NOSSO_AZUL, "SAIR", 33, NOSSO_CINZA);
     botoes_menu[1].colisao = criarBotao(&botoes_menu[1], 42, 450, NOSSO_AZUL, "Créditos", 33, NOSSO_CINZA);
     botoes_menu[2].colisao = criarBotao(&botoes_menu[2], 42, 375, NOSSO_AZUL, "Gerenciar cartas", 33, NOSSO_CINZA);
     botoes_menu[3].colisao = criarBotao(&botoes_menu[3], 42, 300, NOSSO_AZUL, "Singleplayer", 33, NOSSO_CINZA);
     botoes_menu[4].colisao = criarBotao(&botoes_menu[4], 42, 225, NOSSO_AZUL, "Multiplayer", 33, NOSSO_CINZA);
 
+    BotaoNulo botao_menu_som[1]; //Declarando o botão de som da tela
     botao_menu_som[0].colisao = (Rectangle){916, 525, 50, 50};
     botao_menu_som[0].cor_botao = NOSSO_AZUL;
 
@@ -60,11 +60,11 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
         scale = (scaleX < scaleY) ? scaleX : scaleY;
 
         // CONTROLES GERAIS:
-        checarSaida();                                                            // Chama a função que verifica se o usuário saiu
-        checarTelaCheia();                                                        // Chama função que verifica as condições de tela cheia
-        leMouse();                                                                // Chama a função global de leitura de mouse
-        desenhoMenu(target, botoes_menu, 5, *botao_menu_som, img_btn_som, fundo); // Chama a função de desenho objetos do menu
-        controleSons(0, *musica, sons[0]);                                        // Função de controle geral sons - mantem musica tocando
+        checarSaida();                                                             // Chama a função que verifica se o usuário saiu
+        checarTelaCheia();                                                         // Chama função que verifica as condições de tela cheia
+        leMouse();                                                                 // Chama a função global de leitura de mouse
+        desenhoMenu(target, botoes_menu, 5, botao_menu_som, &img_btn_som, &fundo); // Chama a função de desenho objetos do menu
+        controleSons(0, *musica, sons[0]);                                         // Função de controle geral sons - mantem musica tocando
 
         //---------------------------------
         // CONTROLES RESALTA BOTOES
@@ -76,6 +76,7 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
         {
             if (CheckCollisionPointRec(posicao_mouse, botoes_menu[s].colisao) && !coresIguais(botoes_menu[s].cor_botao, GREEN))
             {
+                controleSons(1, *musica, sons[0]);
                 botoes_resaltar = 1;
                 break;
             }
@@ -89,6 +90,7 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
         {
             if (CheckCollisionPointRec(posicao_mouse, botao_menu_som[0].colisao) && !coresIguais(botao_menu_som[0].cor_botao, GREEN))
             {
+                controleSons(1, *musica, sons[0]);
                 botao_menu_som[0].cor_botao = NOSSO_CIANO;
                 botoes_resaltar = 1;
             }
@@ -97,7 +99,7 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
                 botao_menu_som[0].cor_botao = NOSSO_AZUL;
                 botoes_resaltar = 0;
             }
-        }
+        } //Resalta o botão de som
 
         //---------------------------------
         // CONTROLE BOTOES
@@ -113,7 +115,7 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
             else
             {
                 esta_mudo = false;
-                controleSons(3, *musica, sons[1]);
+                controleSons(3, *musica, sons[1]); // Recoloca o som da musica
             }
         } // Controle do som
 
@@ -172,6 +174,8 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
                 UnloadTexture(btn_c_som_cru);
                 UnloadTexture(btn_s_som_cru);
                 UnloadTexture(img_btn_som);
+                UnloadTexture(fundo);
+                UnloadTexture(fundoss);
                 tela = 1;
             } // Espera tocar para sair se o usuário deseja sair
             break;
@@ -185,6 +189,8 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
                 UnloadTexture(btn_c_som_cru);
                 UnloadTexture(btn_s_som_cru);
                 UnloadTexture(img_btn_som);
+                UnloadTexture(fundo);
+                UnloadTexture(fundoss);
                 tela = 3;
             } // Espera tocar para sair se o usuário deseja sair
 
@@ -199,6 +205,8 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
                 UnloadTexture(btn_c_som_cru);
                 UnloadTexture(btn_s_som_cru);
                 UnloadTexture(img_btn_som);
+                UnloadTexture(fundo);
+                UnloadTexture(fundoss);
                 tela = 4;
             } // Espera tocar para sair se o usuário deseja sair
 
@@ -213,6 +221,8 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
                 UnloadTexture(btn_c_som_cru);
                 UnloadTexture(btn_s_som_cru);
                 UnloadTexture(img_btn_som);
+                UnloadTexture(fundo);
+                UnloadTexture(fundoss);
                 tela = 5;
             } // Espera tocar para sair se o usuário deseja sair
 
@@ -227,7 +237,8 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
                 UnloadTexture(btn_c_som_cru);
                 UnloadTexture(btn_s_som_cru);
                 UnloadTexture(img_btn_som);
-                UnloadRenderTexture(*target);
+                UnloadTexture(fundo);
+                UnloadTexture(fundoss);
                 tela = 10;
             } // Espera tocar para sair se o usuário deseja sair
             break;
@@ -247,7 +258,7 @@ void menu(RenderTexture2D *target, Music *musica, Sound sons[])
             img_btn_som = btn_s_som;
         }
 
-    } // Fim while da tela de menu
+    } // Fim loop da tela de menu
 
     return;
 }

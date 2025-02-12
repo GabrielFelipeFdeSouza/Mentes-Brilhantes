@@ -48,6 +48,7 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
     int vezJogar = 1;     // Começa jogando o player
     int btn_clicado = -1; // Botao clicado por ultimo do jogador
     bool clicado_btn = false;
+    int tocou_saida = 0; //Usado para sons
     
     //---------------------------------
     // INICIALIZANDO OS VETORES E AS IMAGENS
@@ -96,7 +97,7 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
         checarTelaCheia(); // Chama função que verifica as condições de tela cheia
         leMouse();
         controleSons(0, *musica, sons[0]);
-        desenhaJogoSingleplayer(target, botoes, fundo, botoes_radio, submenu_tela, contador_tempo, &img_carta, &carta, &frente_carta, quantidades_cartas, vezJogar, &img_carta_bot, &carta_bot, fundo_carta, btn_clicado);
+        desenhaJogoSingleplayer(target, botoes, &fundo, botoes_radio, &submenu_tela, contador_tempo, &img_carta, &carta, &frente_carta, quantidades_cartas, vezJogar, &img_carta_bot, &carta_bot, &fundo_carta, &btn_clicado);
 
         //---------------------------------
         // CONTROLES RESALTA BOTOES
@@ -151,23 +152,21 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
             }
         }
 
-        /*if (!botoes_resaltar)
-        {
-            if (CheckCollisionPointRec(posicao_mouse, botao_menu_som[0].colisao) && !coresIguais(botao_menu_som[0].cor_botao, GREEN))
-            {
-                botao_menu_som[0].cor_botao = NOSSO_CIANO;
-                botoes_resaltar = 1;
-            }
-            else if (!coresIguais(botao_menu_som[0].cor_botao, GREEN))
-            {
-                botao_menu_som[0].cor_botao = NOSSO_AZUL;
-                botoes_resaltar = 0;
-            }
-        }*/
-
         //---------------------------------
         // CONTROLES DO JOGO
         //---------------------------------
+
+        if (submenu_tela == 6 && !tocou_saida)
+        {
+            controleSons(1, *musica, sons[4]);
+            tocou_saida = 1;
+        } //Tocar som bot perdeu
+
+        if (submenu_tela == 5 && !tocou_saida)
+        {
+            controleSons(1, *musica, sons[3]);
+            tocou_saida = 1;
+        } //Tocar som bot ganhou
 
         if (submenu_tela == 0)
         {
@@ -189,7 +188,7 @@ void jogarSingleplayer(RenderTexture2D *target, Music *musica, Sound sons[])
                 iniciar_jogo_bot(&cartas_bot, &cartas_jogador, quantidades_cartas);
 
             } // Iniciar Jogo
-        }
+        } //Condição inicial do jogo
 
         if (submenu_tela == 1)
         {

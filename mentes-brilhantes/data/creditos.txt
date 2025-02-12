@@ -1,7 +1,7 @@
 	      MENTES BRILHANTES
 
 
-Jogo desenvolvido como requesito para matéria de 
+Jogo desenvolvido como requesito para matéria de
 fundamentos de programação do professor Muriel
 Godói da UTFPR/AP.
 

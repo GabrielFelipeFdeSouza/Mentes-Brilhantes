@@ -28,7 +28,7 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
     int *posicoes_desenho_txt;
     int posicoes_desenho_cartas[3];
     int quantidade_cartas_desenhadas = 0;
-    int animacoes_ativas[2] = {1,1};
+    int animacoes_ativas[2] = {0,1};
 
     Carta *cartas_totais;
     Carta cartas_fundo[3];
@@ -38,7 +38,7 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
     botoes[0].colisao = criarBotao(&botoes[0], 906, 552, NOSSO_AZUL, "MENU", 26, NOSSO_CINZA);
 
     // Carregando as imagens:
-    Texture2D fundo = LoadTexture("img/fundo-jogo.png");          // Carrega a imagem do fundo desse menu
+    Texture2D fundo = LoadTexture("./img/fundo-jogo.png");          // Carrega a imagem do fundo desse menu
     Texture2D frente_carta = LoadTexture("img/frente_carta.png"); // Carrega a imagem do frame frontal da carta
 
     // Abrindo e carregando o conteudo para ser exibido:
@@ -54,7 +54,7 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
 
     while (fgets(linha, 512, arquivo_creditos))
     {
-        linha[strcspn(linha, "\n")] = '\0';
+        linha[strcspn(linha, "\r\n")] = '\0';
         strcpy(texto[tamanho_texto], linha);
         tamanho_texto++;
     } // Percorre todo o arquivo salvando em texto
@@ -147,7 +147,7 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
         checarTelaCheia(); // Chama função que verifica as condições de tela cheia
         leMouse();
         controleSons(0, *musica, sons[0]);
-        desenhaCreditos(target, &botoes[0], fundo, contador_tempo, texto, posicoes_desenho_txt, tamanho_texto, cartas_fundo, imagens_cartas, posicoes_desenho_cartas, frente_carta);
+        desenhaCreditos(target, &botoes[0], &fundo, contador_tempo, texto, posicoes_desenho_txt, tamanho_texto, cartas_fundo, imagens_cartas, posicoes_desenho_cartas, &frente_carta);
 
         contador_tempo[0]++;
 
@@ -161,12 +161,16 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
             animacoes_ativas[0] =  !animacoes_ativas[0];
         }
 
-        if (contador_tempo[0] % 3 != 0 && animacoes_ativas[1])
+        if (contador_tempo[0] % 3 != 0 && animacoes_ativas[1] && posicoes_desenho_txt[tamanho_texto - 1] > -30)
         {
             for (int p = 0; p < tamanho_texto; p++)
             {
                 posicoes_desenho_txt[p]--;
             }
+        }
+
+        if(posicoes_desenho_txt[tamanho_texto - 1] < -29){
+            animacoes_ativas[0] = 1;
         }
 
         if (animacoes_ativas[0])
@@ -189,7 +193,7 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
             }
         }
 
-        if (quantidade_cartas_desenhadas == 4)
+        if (quantidade_cartas_desenhadas == 2)
         {
             quantidade_cartas_desenhadas = -1;
         }
@@ -217,6 +221,11 @@ void creditos(RenderTexture2D *target, Music *musica, Sound sons[])
             {
                 trocar_tela = false;
                 UnloadTexture(fundo);
+                UnloadTexture(frente_carta);
+                for (int i = 0; i < 3; i++)
+                {
+                    UnloadTexture(imagens_cartas[i]);
+                }
                 free(posicoes_desenho_txt);
                 free(cartas_totais);
                 tela = 2;

@@ -3,6 +3,6 @@
 
 #include "raylib.h"
 
-void creditos();
+void creditos(RenderTexture2D *target, Music *musica, Sound sons[]);
 
 #endif //FUNCOES_CREDITOS_H

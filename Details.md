@@ -1,6 +1,8 @@
 #Arquivo de detalhes de construção e programação do jogo - MENTES BRILHANTES:
 
-**DETALHES DA EQUIPE**
+**DETALHES DOS AUTORES**
+
+    Ambos, cursando engenharia de computação na UTFPR/AP:
 
     -Gabriel Felipe F. de Souza;
     -Gustavo Ferreira da Fonseca;
@@ -10,7 +12,6 @@
 
 Ainda estamos construindo/identando o jogo, funções estão quase todas funcionando, mas devido aos erros com raylib
 nos computadores da faculdade pode estar causando erros no mesmo que serão corrigidos para a entrega final.
-Problema com a função que ressalta no gerenciador de cartas.
 
 **DETALHES ESPECIFICOS DAS FUNÇÕES**
 
@@ -89,7 +90,7 @@ Problema com a função que ressalta no gerenciador de cartas.
         alguns casos em que as funções auxiliares podem retornar erros para exibição ao usuário, nesse caso, há
         um temporizador feito com frames, que mostra a msg para o usuário pelo tempo programado, atravez do vetor
         retorno_funcoes. Extruturalmente falando a tela é baseada num loop, que enquanto o usuário estiver no
-        gerenciador as funções de verificação/desenho/auxiliares estaão sendo chamadas de acordo com a 
+        gerenciador as funções de verificação/desenho/auxiliares estão sendo chamadas de acordo com a 
         logica propria da função, incialmente ela realiza um ciclo basico de funções, que estão contidas em todas
         as outras telas, apó isso vai para o controle das funções auxiliares, checando cada caso, após isso ela
         passa pelo controle e checagem de todos os botões da tela, e no fim realiza o controle das telas para o 

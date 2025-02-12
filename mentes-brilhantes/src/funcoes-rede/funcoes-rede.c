@@ -1,28 +1,36 @@
 #ifdef _WIN32
 
+//---------------------------------
+// INCLUDES
+//---------------------------------
+
 #include <windows.h>
 #include <winhttp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "funcoes-rede.h"
 
+//---------------------------------
+// FUNÇÕES DE REDE
+//---------------------------------
+
 int conectar_server()
 {
-    const wchar_t *host = L"gg128.ddnsfree.com"; // Endereço do seu servidor
-    const wchar_t *path = L"/";                  // Caminho para o script PHP
+    const wchar_t *host = L"gg128.ddnsfree.com"; // Server
+    const wchar_t *path = L"/";
 
-    // Inicializa o handle para a sessão HTTP
+    // Inicializa o handle para a sessão HTTP:
     HINTERNET hSession = WinHttpOpen(L"ConexaoTester/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, NULL, NULL, 0);
     if (!hSession)
     {
         return 0; // Falha ao inicializar a sessão
     }
 
-    // Configura os timeouts
-    DWORD timeout = 750; // 750ms para timeout maximo
-    WinHttpSetTimeouts(hSession, timeout, timeout, timeout, timeout);
+    // Configura os timeouts:
+    DWORD timeout = 750;                                              // 750ms para timeout maximo
+    WinHttpSetTimeouts(hSession, timeout, timeout, timeout, timeout); // Setando todos os timeouts
 
-    // Conecta ao servidor
+    // Conecta ao servidor:
     HINTERNET hConnect = WinHttpConnect(hSession, host, INTERNET_DEFAULT_HTTP_PORT, 0);
     if (!hConnect)
     {
@@ -30,176 +38,159 @@ int conectar_server()
         return 0; // Falha ao conectar ao servidor
     }
 
-    // Cria uma requisição HEAD (teste de conexão, sem baixar conteúdo)
+    // Cria uma requisição HEAD (teste de conexão, sem baixar conteúdo):
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"HEAD", path, NULL, NULL, NULL, 0);
     if (!hRequest)
     {
         WinHttpCloseHandle(hConnect);
         WinHttpCloseHandle(hSession);
-        return 0; // Falha ao criar a requisição
+        return 0; // Falha ao criar a requisição para o server
     }
 
-    // Envia a requisição e verifica a resposta
-    BOOL bResults = WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0) && WinHttpReceiveResponse(hRequest, NULL);
+    // Envia a requisição e verifica a resposta:
+    BOOL resultado = WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0) && WinHttpReceiveResponse(hRequest, NULL);
 
-    // Fecha os handles
+    // Fecha os handles de todos os processos:
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
 
-    // Retorna o resultado da conexão
-    return bResults ? 1 : 0;
-}
+    // Retorna o resultado da conexão:
+    return resultado ? 1 : 0;
+} // Função responsável por conectar ao servidor, retornando true / false
 
 void enviarDados(int id_sala, int cartas_escolhidas[32], char *nome_jogador1, int comandos[2])
 {
-    // Configurações do servidor e arquivo PHP
-    const wchar_t *host = L"gg128.ddnsfree.com";                                  // Endereço do seu servidor
-    const wchar_t *path = L"/projetos/super-trunfo/SERVER/processar_arquivo.php"; // Caminho para o script PHP
+    // Configurações do servidor e arquivo PHP:
+    const wchar_t *host = L"gg128.ddnsfree.com";                                  // Servidor
+    const wchar_t *path = L"/projetos/super-trunfo/SERVER/processar_arquivo.php"; // Caminho para o script PHP de processar sala
 
-    // Buffer para armazenar os dados formatados
-    char dados[1024]; // Ajuste o tamanho conforme necessário
+    // Buffer para armazenar os dados formatados:
+    char dados[1024];
 
-    // Adicionar comandos ao JSON
+    // Adicionando comandos ao JSON:
     char comandos_str[32];
     sprintf(comandos_str, "%d,%d", comandos[0], comandos[1]);
 
-    // Adicionar cartas escolhidas ao JSON
+    // Adicionando cartas escolhidas ao JSON:
     char cartas_str[256] = {0};
     for (int i = 0; i < 32; i++)
     {
-        char buffer[8];
-        sprintf(buffer, "%d,", cartas_escolhidas[i]);
-        strcat(cartas_str, buffer);
+        char buffer_txt[8];
+        sprintf(buffer_txt, "%d,", cartas_escolhidas[i]);
+        strcat(cartas_str, buffer_txt);
     }
-    // Remover a última vírgula
+
+    // Remover a última vírgula:
     cartas_str[strlen(cartas_str) - 1] = '\0';
 
-    // Formatar os dados do JSON
+    // Formatar os dados do JSON:
     sprintf(dados,
-            "{\"arquivo\":\"%d.txt\",\"dados\":\"%s\\n%s\\n%s\"}",
-            id_sala,
-            comandos_str,
-            cartas_str,
-            nome_jogador1);
+            "{\"arquivo\":\"%d.txt\",\"dados\":\"%s\\n%s\\n%s\"}", id_sala, comandos_str, cartas_str, nome_jogador1);
 
-    // Abre sessão e conecta ao servidor
-    HINTERNET hSession = WinHttpOpen(L"HTTP Writer/1.0",
-                                     WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                                     NULL, NULL, 0);
+    // Abre sessão e conecta ao servidor:
+    HINTERNET hSession = WinHttpOpen(L"HTTP Writer/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, NULL, NULL, 0);
     HINTERNET hConnect = WinHttpConnect(hSession, host, INTERNET_DEFAULT_HTTP_PORT, 0);
 
-    // Cria a requisição HTTP POST
+    // Cria a requisição HTTP POST:
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"POST", path, NULL, NULL, NULL, 0);
 
-    // Adiciona cabeçalhos da requisição
-    WinHttpAddRequestHeaders(hRequest, L"Content-Type: application/json\r\n",
-                             -1, WINHTTP_ADDREQ_FLAG_ADD);
+    // Adiciona cabeçalhos da requisição:
+    WinHttpAddRequestHeaders(hRequest, L"Content-Type: application/json\r\n", -1, WINHTTP_ADDREQ_FLAG_ADD);
 
-    // Envia a requisição POST com os dados JSON
-    BOOL enviado = WinHttpSendRequest(hRequest,
-                                      NULL, 0,
-                                      (LPVOID)dados, strlen(dados),
-                                      strlen(dados), 0);
+    // Envia a requisição POST com os dados JSON:
+    BOOL enviado = WinHttpSendRequest(hRequest, NULL, 0, (LPVOID)dados, strlen(dados), strlen(dados), 0);
 
-    // Verifica se a requisição foi enviada
+    // Verifica se a requisição foi enviada:
     if (!enviado)
     {
         printf("GAME: Erro ao enviar requisição: %lu\n", GetLastError());
         return;
     }
 
-    // Recebe a resposta do servidor
+    // Recebe a resposta do servidor:
     WinHttpReceiveResponse(hRequest, NULL);
 
-    // Lê a resposta do servidor
+    // Lê a resposta do servidor:
     // DWORD tamanho;
-    char buffer[2048] = {0};
+    char buffer_resposta[2048] = {0};
     DWORD lido;
-    if (WinHttpReadData(hRequest, buffer, sizeof(buffer) - 1, &lido))
+    if (WinHttpReadData(hRequest, buffer_resposta, sizeof(buffer_resposta) - 1, &lido))
     {
-        buffer[lido] = '\0'; // Garantir que o buffer seja uma string válida
-        printf("Resposta do servidor: %s\n", buffer);
+        buffer_resposta[lido] = '\0'; // Garante que o buffer seja uma string válida
+        printf("GAME: Resposta do servidor: %s\n", buffer_resposta);
     }
     else
     {
-        printf("Erro ao ler a resposta: %lu\n", GetLastError());
+        printf("GAME: Erro ao ler a resposta do servidor: %lu\n", GetLastError());
     }
 
-    // Fecha as conexões
+    // Fecha as conexões:
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
-}
+
+    return;
+} // Função que envia dados ao servidor, o id da sala, nome do jogador, o vetor de comando e as cartas escolhidas
 
 void encerrar_secao(int id_sala, int cartas_escolhidas[32], char *nome_jogador1, int comandos[2])
 {
-    // Configurações do servidor e arquivo PHP
-    const wchar_t *host = L"gg128.ddnsfree.com";                              // Endereço do seu servidor
-    const wchar_t *path = L"/projetos/super-trunfo/SERVER/destruir_jogo.php"; // Caminho para o script PHP
+    // Configurações do servidor e arquivo PHP:
+    const wchar_t *host = L"gg128.ddnsfree.com";                              // Servidor
+    const wchar_t *path = L"/projetos/super-trunfo/SERVER/destruir_jogo.php"; // Caminho para o script PHP de encerrar sala
 
-    // Buffer para armazenar os dados formatados
-    char dados[1024]; // Ajuste o tamanho conforme necessário
+    // Buffer para armazenar os dados formatados:
+    char dados[1024];
 
-    // Adicionar comandos ao JSON
+    // Adicionar comandos ao JSON:
     char comandos_str[32];
     sprintf(comandos_str, "%d,%d", comandos[0], comandos[1]);
 
-    // Adicionar cartas escolhidas ao JSON
+    // Adicionar cartas escolhidas ao JSON:
     char cartas_str[256] = {0};
     for (int i = 0; i < 32; i++)
     {
-        char buffer[8];
-        sprintf(buffer, "%d,", cartas_escolhidas[i]);
-        strcat(cartas_str, buffer);
+        char buffer_txt[8];
+        sprintf(buffer_txt, "%d,", cartas_escolhidas[i]);
+        strcat(cartas_str, buffer_txt);
     }
-    // Remover a última vírgula
+
+    // Remover a última vírgula:
     cartas_str[strlen(cartas_str) - 1] = '\0';
 
-    // Formatar os dados do JSON
-    sprintf(dados,
-            "{\"arquivo\":\"%d.txt\",\"dados\":\"%s\\n%s\\n%s\"}",
-            id_sala,
-            comandos_str,
-            cartas_str,
-            nome_jogador1);
+    // Formatar os dados do JSON:
+    sprintf(dados, "{\"arquivo\":\"%d.txt\",\"dados\":\"%s\\n%s\\n%s\"}", id_sala, comandos_str, cartas_str, nome_jogador1);
 
-    // Abre sessão e conecta ao servidor
-    HINTERNET hSession = WinHttpOpen(L"HTTP Writer/1.0",
-                                     WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                                     NULL, NULL, 0);
+    // Abre sessão e conecta ao servidor:
+    HINTERNET hSession = WinHttpOpen(L"HTTP Writer/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, NULL, NULL, 0);
     HINTERNET hConnect = WinHttpConnect(hSession, host, INTERNET_DEFAULT_HTTP_PORT, 0);
 
-    // Cria a requisição HTTP POST
+    // Cria a requisição HTTP POST:
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"POST", path, NULL, NULL, NULL, 0);
 
-    // Adiciona cabeçalhos da requisição
-    WinHttpAddRequestHeaders(hRequest, L"Content-Type: application/json\r\n",
-                             -1, WINHTTP_ADDREQ_FLAG_ADD);
+    // Adiciona cabeçalhos da requisição:
+    WinHttpAddRequestHeaders(hRequest, L"Content-Type: application/json\r\n", -1, WINHTTP_ADDREQ_FLAG_ADD);
 
-    // Envia a requisição POST com os dados JSON
-    BOOL enviado = WinHttpSendRequest(hRequest,
-                                      NULL, 0,
-                                      (LPVOID)dados, strlen(dados),
-                                      strlen(dados), 0);
+    // Envia a requisição POST com os dados JSON:
+    BOOL enviado = WinHttpSendRequest(hRequest, NULL, 0, (LPVOID)dados, strlen(dados), strlen(dados), 0);
 
-    // Verifica se a requisição foi enviada
+    // Verifica se a requisição foi enviada:
     if (!enviado)
     {
         printf("GAME: Erro ao enviar requisição para o servidor durante o encerrar da sala: %lu\n", GetLastError());
         return;
     }
 
-    // Recebe a resposta do servidor
+    // Recebe a resposta do servidor:
     WinHttpReceiveResponse(hRequest, NULL);
 
-    // Lê a resposta do servidor
+    // Lê a resposta do servidor:
     // DWORD tamanho;
     char buffer[2048] = {0};
     DWORD lido;
     if (WinHttpReadData(hRequest, buffer, sizeof(buffer) - 1, &lido))
     {
-        buffer[lido] = '\0'; // Garantir que o buffer seja uma string válida
+        buffer[lido] = '\0'; // Garante que o buffer seja uma string válida
         printf("GAME: Resposta do servidor: %s\n", buffer);
     }
     else
@@ -207,48 +198,51 @@ void encerrar_secao(int id_sala, int cartas_escolhidas[32], char *nome_jogador1,
         printf("GAME: Erro ao ler a resposta: %lu\n", GetLastError());
     }
 
-    // Fecha as conexões
+    // Fecha as conexões:
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
+
+    return;
 }
 
 void lerServidor1(int id_sala, int comandos[2], char *nome_jogador2)
 {
-    // Configurações do servidor e arquivo
+    // Configurações do servidor e arquivo:
     const wchar_t *host = L"gg128.ddnsfree.com"; // Servidor
-    wchar_t path[100];
-    swprintf(path, sizeof(path) / sizeof(wchar_t), L"./projetos/super-trunfo/SERVER/%d.txt", id_sala);
-    // Vetores para armazenar os dados
-    int vetor1[2] = {0};  // Vetor para os dois primeiros números
-    int vetor2[32] = {0}; // Vetor para os 32 números seguintes
-    char nome[51] = {0};  // Nome com até 50 caracteres
+    wchar_t path[100];                           // variavel para armazenar o caminho ao arquivo da sala
 
-    // Abre sessão e conecta ao servidor
-    HINTERNET hSession = WinHttpOpen(L"HTTP Reader/1.0",
-                                     WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                                     NULL, NULL, 0);
+    swprintf(path, sizeof(path) / sizeof(wchar_t), L"./projetos/super-trunfo/SERVER/%d.txt", id_sala); // Cria o path exato até o arquivo da sala com a id da conexão
+
+    // Vetores para armazenar os dados:
+    int vetor1[2] = {0};  // Vetor para os dois primeiros números(comandos)
+    char nome[51] = {0};  // Nome com até 50 caracteres (nome)
+
+    // Abre sessão e conecta ao servidor:
+    HINTERNET hSession = WinHttpOpen(L"HTTP Reader/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, NULL, NULL, 0);
     HINTERNET hConnect = WinHttpConnect(hSession, host, INTERNET_DEFAULT_HTTP_PORT, 0);
 
-    // Faz a solicitação do arquivo
+    // Faz a solicitação do arquivo:
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", path, NULL, NULL, NULL, 0);
     WinHttpSendRequest(hRequest, NULL, 0, NULL, 0, 0, 0);
     WinHttpReceiveResponse(hRequest, NULL);
 
-    // Lê o conteúdo do arquivo
+    // Lê o conteúdo do arquivo:
     // DWORD tamanho;
-    char buffer[2048] = {0};
+    char buffer_txt[2048] = {0};
     DWORD lido;
-    if (WinHttpReadData(hRequest, buffer, sizeof(buffer) - 1, &lido))
+    if (WinHttpReadData(hRequest, buffer_txt, sizeof(buffer_txt) - 1, &lido))
     {
-        buffer[lido] = '\0'; // Garantir que o buffer seja uma string válida
+        buffer_txt[lido] = '\0'; // Garante que o buffer seja uma string válida
 
         // Processar o conteúdo do arquivo
-        char *linha1 = strtok(buffer, "\n"); // Primeira linha
-        char *linha2 = strtok(NULL, "\n");   // Segunda linha
-        char *linha3 = strtok(NULL, "\n");   // Terceira linha (nome)
+        char *linha1 = strtok(buffer_txt, "\n"); // Primeira linha (comandos)
+        char *linha2 = strtok(NULL, "\n");       // Segunda linha (cartas)
+        char *linha3 = strtok(NULL, "\n");       // Terceira linha (nome)
 
-        // Processar vetor1
+        (void)linha2;
+
+        // Processar vetor1:
         char *token = strtok(linha1, ",");
         for (int i = 0; i < 2 && token != NULL; i++)
         {
@@ -256,17 +250,7 @@ void lerServidor1(int id_sala, int comandos[2], char *nome_jogador2)
             token = strtok(NULL, ",");
         }
 
-        // Processar vetor2
-        token = strtok(linha2, ",");
-        for (int i = 0; i < 32 && token != NULL; i++)
-        {
-            vetor2[i] = atoi(token);
-            token = strtok(NULL, ",");
-        }
-
-        (void)vetor2;
-
-        // Processar o nome
+        // Processar o nome:
         if (linha3 != NULL)
         {
             strncpy(nome, linha3, 50);
@@ -274,7 +258,7 @@ void lerServidor1(int id_sala, int comandos[2], char *nome_jogador2)
         }
     }
 
-    // Fechar conexões
+    // Fechar conexões:
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
@@ -282,47 +266,45 @@ void lerServidor1(int id_sala, int comandos[2], char *nome_jogador2)
     for (int i = 0; i < 2; i++)
     {
         comandos[i] = vetor1[i];
-    }
+    } // Devolve o vetor de comandos
 
-    strcpy(nome_jogador2, nome);
+    strcpy(nome_jogador2, nome); // Devolve nome do adversário
+
+    return;
 }
 
 void lerServidor2(int id_sala, int *submenu_tela)
 {
-    // Configurações do servidor e arquivo
+    // Configurações do servidor e arquivo:
     const wchar_t *host = L"gg128.ddnsfree.com"; // Servidor
-    wchar_t path[100];
-    swprintf(path, sizeof(path) / sizeof(wchar_t), L"./projetos/super-trunfo/SERVER/%d.txt", id_sala);
-    // Vetores para armazenar os dados
-    int vetor1[2] = {0};  // Vetor para os dois primeiros números
-    int vetor2[32] = {0}; // Vetor para os 32 números seguintes
-    char nome[51] = {0};  // Nome com até 50 caracteres
+    wchar_t path[100];                           // variavel para armazenar o caminho ao arquivo da sala
 
-    // Abre sessão e conecta ao servidor
-    HINTERNET hSession = WinHttpOpen(L"HTTP Reader/1.0",
-                                     WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                                     NULL, NULL, 0);
+    swprintf(path, sizeof(path) / sizeof(wchar_t), L"./projetos/super-trunfo/SERVER/%d.txt", id_sala); // Cria o path exato até o arquivo da sala com a id da conexão
+
+    // Vetores para armazenar os dados:
+    int vetor1[2] = {0}; // Vetor para os dois primeiros números(comandos)
+
+    // Abre sessão e conecta ao servidor:
+    HINTERNET hSession = WinHttpOpen(L"HTTP Reader/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, NULL, NULL, 0);
     HINTERNET hConnect = WinHttpConnect(hSession, host, INTERNET_DEFAULT_HTTP_PORT, 0);
 
-    // Faz a solicitação do arquivo
+    // Faz a solicitação do arquivo:
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", path, NULL, NULL, NULL, 0);
     WinHttpSendRequest(hRequest, NULL, 0, NULL, 0, 0, 0);
     WinHttpReceiveResponse(hRequest, NULL);
 
-    // Lê o conteúdo do arquivo
+    // Lê o conteúdo do arquivo:
     // DWORD tamanho;
-    char buffer[2048] = {0};
+    char buffer_txt[2048] = {0};
     DWORD lido;
-    if (WinHttpReadData(hRequest, buffer, sizeof(buffer) - 1, &lido))
+    if (WinHttpReadData(hRequest, buffer_txt, sizeof(buffer_txt) - 1, &lido))
     {
-        buffer[lido] = '\0'; // Garantir que o buffer seja uma string válida
+        buffer_txt[lido] = '\0'; // Garantir que o buffer seja uma string válida
 
         // Processar o conteúdo do arquivo
-        char *linha1 = strtok(buffer, "\n"); // Primeira linha
-        char *linha2 = strtok(NULL, "\n");   // Segunda linha
-        char *linha3 = strtok(NULL, "\n");   // Terceira linha (nome)
+        char *linha1 = strtok(buffer_txt, "\n"); // Primeira linha (comandos)
 
-        // Processar vetor1
+        // Processar vetor1:
         char *token = strtok(linha1, ",");
         for (int i = 0; i < 2 && token != NULL; i++)
         {
@@ -333,70 +315,53 @@ void lerServidor2(int id_sala, int *submenu_tela)
         if (vetor1[1] == 0)
         {
             *submenu_tela = 8;
-        }
-
-        // Processar vetor2
-        token = strtok(linha2, ",");
-        for (int i = 0; i < 32 && token != NULL; i++)
-        {
-            vetor2[i] = atoi(token);
-            token = strtok(NULL, ",");
-        }
-
-        (void)vetor2;
-
-        // Processar o nome
-        if (linha3 != NULL)
-        {
-            strncpy(nome, linha3, 50);
-            nome[50] = '\0'; // Garantir terminador nulo
-        }
+        } // Encerra a sala, por causa de desconeção do player adversário
     }
 
-    (void)nome;
-
-    // Fechar conexões
+    // Fechar conexões:
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
+
+    return;
 }
 
 void ReceberDadosIniciais(char *nome_jogador1, int *cartas_escolhidas, int id_sala)
 {
 
-    // Configurações do servidor e arquivo
+    // Configurações do servidor e arquivo:
     const wchar_t *host = L"gg128.ddnsfree.com"; // Servidor
-    wchar_t path[100];
-    swprintf(path, sizeof(path) / sizeof(wchar_t), L"./projetos/super-trunfo/SERVER/%d.txt", id_sala);
-    // Vetores para armazenar os dados
+    wchar_t path[100];                           // variavel para armazenar o caminho ao arquivo da sala
+
+    swprintf(path, sizeof(path) / sizeof(wchar_t), L"./projetos/super-trunfo/SERVER/%d.txt", id_sala); // Cria o path exato até o arquivo da sala com a id da conexão
+
+    // Vetores para armazenar os dados:
     int vetor1[2] = {0};  // Vetor para os dois primeiros números
     int vetor2[32] = {0}; // Vetor para os 32 números seguintes
 
-    // Abre sessão e conecta ao servidor
-    HINTERNET hSession = WinHttpOpen(L"HTTP Reader/1.0",
-                                     WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                                     NULL, NULL, 0);
+    // Abre sessão e conecta ao servidor:
+    HINTERNET hSession = WinHttpOpen(L"HTTP Reader/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, NULL, NULL, 0);
     HINTERNET hConnect = WinHttpConnect(hSession, host, INTERNET_DEFAULT_HTTP_PORT, 0);
 
-    // Faz a solicitação do arquivo
+    // Faz a solicitação do arquivo:
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", path, NULL, NULL, NULL, 0);
     WinHttpSendRequest(hRequest, NULL, 0, NULL, 0, 0, 0);
     WinHttpReceiveResponse(hRequest, NULL);
 
-    // Lê o conteúdo do arquivo
+    // Lê o conteúdo do arquivo:
     // DWORD tamanho;
-    char buffer[2048] = {0};
+    char buffer_txt[2048] = {0};
     DWORD lido;
-    if (WinHttpReadData(hRequest, buffer, sizeof(buffer) - 1, &lido))
+    if (WinHttpReadData(hRequest, buffer_txt, sizeof(buffer_txt) - 1, &lido))
     {
-        buffer[lido] = '\0'; // Garantir que o buffer seja uma string válida
+        buffer_txt[lido] = '\0'; // Garantir que o buffer seja uma string válida
 
         // Processar o conteúdo do arquivo
-        char *linha1 = strtok(buffer, "\n"); // Primeira linha
-        char *linha2 = strtok(NULL, "\n");   // Segunda linha
-        char *linha3 = strtok(NULL, "\n");   // Terceira linha (nome)
+        char *linha1 = strtok(buffer_txt, "\n"); // Primeira linha
+        char *linha2 = strtok(NULL, "\n");       // Segunda linha
+        char *linha3 = strtok(NULL, "\n");       // Terceira linha (nome)
 
-        // Processar vetor1
+        // Processar vetor1:
         char *token = strtok(linha1, ",");
         for (int i = 0; i < 2 && token != NULL; i++)
         {
@@ -406,7 +371,7 @@ void ReceberDadosIniciais(char *nome_jogador1, int *cartas_escolhidas, int id_sa
 
         (void)vetor1;
 
-        // Processar vetor2
+        // Processar vetor2:
         token = strtok(linha2, ",");
         for (int i = 0; i < 32 && token != NULL; i++)
         {
@@ -415,7 +380,7 @@ void ReceberDadosIniciais(char *nome_jogador1, int *cartas_escolhidas, int id_sa
             cartas_escolhidas[i] = vetor2[i];
         }
 
-        // Processar o nome
+        // Processar o nome:
         if (linha3 != NULL)
         {
             strncpy(nome_jogador1, linha3, 50);
@@ -423,7 +388,7 @@ void ReceberDadosIniciais(char *nome_jogador1, int *cartas_escolhidas, int id_sa
         }
     }
 
-    // Fechar conexões
+    // Fechar conexões:
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
@@ -431,28 +396,26 @@ void ReceberDadosIniciais(char *nome_jogador1, int *cartas_escolhidas, int id_sa
 
 int verificarSalaVazia(int id_sala)
 {
-    int saida = 0;
-    // Configurações do servidor e arquivo
+    int saida = 0; // Variavel para verificar se há ou não sala criada
+    // Configurações do servidor e arquivo:
     const wchar_t *host = L"gg128.ddnsfree.com"; // Servidor
-    wchar_t path[100];
-    swprintf(path, sizeof(path) / sizeof(wchar_t), L"./projetos/super-trunfo/SERVER/%d.txt", id_sala);
-    // Vetores para armazenar os dados
-    int vetor1[2] = {0};  // Vetor para os dois primeiros números
-    int vetor2[32] = {0}; // Vetor para os 32 números seguintes
-    char nome[51] = {0};  // Nome com até 50 caracteres
+    wchar_t path[100];                           // variavel para armazenar o caminho ao arquivo da sala
 
-    // Abre sessão e conecta ao servidor
-    HINTERNET hSession = WinHttpOpen(L"HTTP Reader/1.0",
-                                     WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                                     NULL, NULL, 0);
+    swprintf(path, sizeof(path) / sizeof(wchar_t), L"./projetos/super-trunfo/SERVER/%d.txt", id_sala); // Cria o path exato até o arquivo da sala com a id da conexão
+
+    // Vetores para armazenar os dados:
+    int vetor1[2] = {0}; // Vetor para os dois primeiros números
+
+    // Abre sessão e conecta ao servidor:
+    HINTERNET hSession = WinHttpOpen(L"HTTP Reader/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, NULL, NULL, 0);
     HINTERNET hConnect = WinHttpConnect(hSession, host, INTERNET_DEFAULT_HTTP_PORT, 0);
 
-    // Faz a solicitação do arquivo
+    // Faz a solicitação do arquivo:
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", path, NULL, NULL, NULL, 0);
     WinHttpSendRequest(hRequest, NULL, 0, NULL, 0, 0, 0);
     WinHttpReceiveResponse(hRequest, NULL);
 
-    // Lê o conteúdo do arquivo
+    // Lê o conteúdo do arquivo:
     // DWORD tamanho;
     char buffer[2048] = {0};
     DWORD lido;
@@ -462,8 +425,6 @@ int verificarSalaVazia(int id_sala)
 
         // Processar o conteúdo do arquivo
         char *linha1 = strtok(buffer, "\n"); // Primeira linha
-        char *linha2 = strtok(NULL, "\n");   // Segunda linha
-        char *linha3 = strtok(NULL, "\n");   // Terceira linha (nome)
 
         // Processar vetor1
         char *token = strtok(linha1, ",");
@@ -478,31 +439,11 @@ int verificarSalaVazia(int id_sala)
             saida = 1;
         }
 
-        // Processar vetor2
-        token = strtok(linha2, ",");
-        for (int i = 0; i < 32 && token != NULL; i++)
-        {
-            vetor2[i] = atoi(token);
-            token = strtok(NULL, ",");
-        }
-
-        (void)vetor2;
-
-        // Processar o nome
-        if (linha3 != NULL)
-        {
-            strncpy(nome, linha3, 50);
-            nome[50] = '\0'; // Garantir terminador nulo
-        }
+        // Fechar conexões:
+        WinHttpCloseHandle(hRequest);
+        WinHttpCloseHandle(hConnect);
+        WinHttpCloseHandle(hSession);
     }
-
-    (void)nome;
-
-    // Fechar conexões
-    WinHttpCloseHandle(hRequest);
-    WinHttpCloseHandle(hConnect);
-    WinHttpCloseHandle(hSession);
-
     return saida;
 }
 

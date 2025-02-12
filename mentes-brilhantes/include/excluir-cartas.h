@@ -5,5 +5,5 @@
 
 // Declaração das funções
 void ajustarPosicoes();
-void excluirCarta();
+void excluirCarta(int id_excluir);
 #endif //EXCLUIR_CARTAS_H

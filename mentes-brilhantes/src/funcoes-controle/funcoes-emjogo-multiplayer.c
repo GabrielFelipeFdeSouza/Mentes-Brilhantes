@@ -37,7 +37,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
 
     int submenu_tela = 0; // Variavel do submenus do jogo - ajuda para correta lógica das telas - começa em configurações da partida
     Botao botoes[3];
-    int server_conection = 0;              // Variavel usada para conectar ao servidor
+    int conexao_server = 0;              // Variavel usada para conectar ao servidor
     int quantidades_cartas[3] = {0, 0, 0}; // Quantidade de cartas dos jogadores e empates_seguidos nessa ordem
     //  int quantidade_empates_seguidos = 0;
     long int contador_tempo[7] = {179, 0, 0, 211, 0, 0, 179}; // Contadores de tempo baseado em FPS
@@ -56,6 +56,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
     char nome_jogador2[50];
     char nome_jogadornullo[50];
     int tipo_entrada = 0;
+    int tocou_saida = 0; //Sinalizador do tocar som da saida de usuário
 
     //---------------------------------
     // INICIALIZANDO OS VETORES E AS IMAGENS
@@ -64,6 +65,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
     botoes[0].colisao = criarBotao(&botoes[0], 906, 552, NOSSO_AZUL, "MENU", 26, NOSSO_CINZA);
     botoes[1].colisao = criarBotao(&botoes[1], 40, 265, NOSSO_AZUL, "CRIAR NOVA SALA", 30, NOSSO_CINZA);
     botoes[2].colisao = criarBotao(&botoes[2], 631, 265, NOSSO_AZUL, "ENTRAR NUMA SALA", 30, NOSSO_CINZA);
+    
     TextBox caixa_texto[2];
     caixa_texto[0] = (TextBox){{627, 200, 340, 46}, NOSSO_CREME, "", "Código:", NOSSO_AZUL, true, true, 0, 0, 0};
     caixa_texto[1] = (TextBox){{310, 95, 340, 46}, NOSSO_CREME, "", "Nome Player:", NOSSO_AZUL, true, true, 0, 0, 0};
@@ -108,7 +110,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
         checarTelaCheia(); // Chama função que verifica as condições de tela cheia
         leMouse();
         controleSons(0, *musica, sons[0]);
-        desenhaJogoMultiplayer(target, botoes, fundo, submenu_tela, server_conection, caixa_texto, erros, id_sala, contador_tempo, quantidades_cartas, fundo_carta, frente_carta, carta1, carta2, img_carta, img_carta_player2, btn_clicado, nome_jogador1, nome_jogador2, vezJogar, tipo_entrada);
+        desenhaJogoMultiplayer(target, botoes, fundo, submenu_tela, conexao_server, caixa_texto, erros, id_sala, contador_tempo, quantidades_cartas, fundo_carta, frente_carta, carta1, carta2, &img_carta, &img_carta_player2, btn_clicado, nome_jogador1, nome_jogador2, vezJogar, tipo_entrada);
 
         //---------------------------------
         // CONTROLES RESALTA BOTOES
@@ -116,12 +118,30 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
 
         botoes_resaltar = 0; // Zerando para reuso
 
-        if (submenu_tela == 0 && server_conection == 1)
+        if(submenu_tela == 8 && !tocou_saida){
+            controleSons(1, *musica, sons[2]);
+            tocou_saida = 1;
+        }
+
+        if (submenu_tela == 6 && !tocou_saida)
+        {
+            controleSons(1, *musica, sons[4]);
+            tocou_saida = 1;
+        }
+
+        if (submenu_tela == 5 && !tocou_saida)
+        {
+            controleSons(1, *musica, sons[3]);
+            tocou_saida = 1;
+        }
+
+        if (submenu_tela == 0 && conexao_server == 1)
         {
             for (int t = 0; t < 3; t++)
             {
                 if (CheckCollisionPointRec(posicao_mouse, botoes[t].colisao) && !coresIguais(botoes[t].cor_botao, GREEN))
                 {
+                    controleSons(1, *musica, sons[0]);
                     botoes_resaltar = 1;
                     break;
                 }
@@ -136,6 +156,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
         {
             if (CheckCollisionPointRec(posicao_mouse, botoes[0].colisao) && !coresIguais(botoes[0].cor_botao, GREEN))
             {
+                controleSons(1, *musica, sons[0]);
                 botoes_resaltar = 1;
             }
             else if (!coresIguais(botoes[0].cor_botao, GREEN))
@@ -153,6 +174,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
                 {
                     if (CheckCollisionPointRec(posicao_mouse, (Rectangle){15 + 21, 130 + 244 + (s * 45), 244, 35}))
                     {
+                        controleSons(1, *musica, sons[0]);
                         botoes_resaltar = 1;
                         break;
                     }
@@ -164,6 +186,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
                 {
                     if (CheckCollisionPointRec(posicao_mouse, (Rectangle){15 + 21, 130 + 244 + (s * 45), 244, 35}))
                     {
+                        controleSons(1, *musica, sons[0]);
                         botoes_resaltar = 2;
                         break;
                     }
@@ -175,23 +198,23 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
         // CONTROLES DO JOGO
         //---------------------------------
 
-        if (submenu_tela == 0 && server_conection == 0)
+        if (submenu_tela == 0 && conexao_server == 0)
         {
             escreverLog("Conectando ao servidor do jogo...");
 
             if (conectar_server())
             {
                 escreverLog("Conexao ao servidor bem-sucedida.");
-                server_conection = 1;
+                conexao_server = 1;
             }
             else
             {
                 escreverLog("Falha na conexao ao servidor.");
-                server_conection = -1;
+                conexao_server = -1;
             }
         } // Menu inicial, tenta conexão ao server do jogo
 
-        if (submenu_tela == 0 && server_conection == 1)
+        if (submenu_tela == 0 && conexao_server == 1)
         {
             // CONTROLE CAIXAS DE TEXTO:
 
@@ -220,11 +243,11 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
 
             if (caixa_texto[0].subcaixa)
             {
-                leTeclado(&caixa_texto[0].texto, &caixa_texto[0].tamanho, caixa_texto[0].subgrupo, 8); // Chama a funçaõ que le caracteres do teclado
+                leTeclado(caixa_texto[0].texto, &caixa_texto[0].tamanho, caixa_texto[0].subgrupo, 8); // Chama a funçaõ que le caracteres do teclado
             }
             if (caixa_texto[1].subcaixa)
             {
-                leTeclado(&caixa_texto[1].texto, &caixa_texto[1].tamanho, caixa_texto[1].subgrupo, 30); // Chama a funçaõ que le caracteres do teclado
+                leTeclado(caixa_texto[1].texto, &caixa_texto[1].tamanho, caixa_texto[1].subgrupo, 30); // Chama a funçaõ que le caracteres do teclado
             }
 
             // CONTROLE BOTÕES E FUNÇÕES:
@@ -238,6 +261,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
                     strcpy(nome_jogador1, caixa_texto[1].texto);
                     criarNovaSala(&cartas_jogador1, &cartas_jogador2, quantidades_cartas, cartas_escolhidas);
                     id_sala = aleatorizarSala();
+                    id_master_saida = id_sala;
                     comandos[1] = 16;
                     enviarDados(id_sala, cartas_escolhidas, nome_jogador1, comandos);
                     submenu_tela = 1;
@@ -256,6 +280,7 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
                 if ((caixa_texto[0].tamanho >= 8) && (caixa_texto[1].tamanho >= 1))
                 {
                     id_sala = atoi(caixa_texto[0].texto);
+                    id_master_saida = id_sala;
                     if (verificarSalaVazia(id_sala))
                     {
                         strcpy(nome_jogador1, caixa_texto[1].texto);
@@ -505,6 +530,8 @@ void jogarMultiplayer(RenderTexture2D *target, Music *musica, Sound sons[])
                 UnloadTexture(fundo);
                 UnloadTexture(frente_carta);
                 UnloadTexture(fundo_carta);
+                UnloadTexture(img_carta);
+                UnloadTexture(img_carta_player2);
                 free(pilha_empate);
                 free(cartas_jogador2);
                 free(cartas_jogador1);

@@ -1,7 +1,11 @@
 /*
 -->MAIN<--
-Arquivo base do jogo, responsavel polr inicializar as coisas importantes e
+Arquivo base do jogo, responsavel por inicializar as coisas importantes e
 também por fecha-las*/
+
+//---------------------------------
+// INCLUDES
+//---------------------------------
 
 #include "main.h"
 #include "raylib.h"
@@ -24,32 +28,32 @@ também por fecha-las*/
 //---------------------------------
 // CONSTANTES
 //---------------------------------
+
 const int COMPRIMENTO_TELA = 1000;
 const int ALTURA_TELA = 600;
-
-float scale, scaleX, scaleY;
-
-bool esta_mudo = true;    // Controle geral de sons
-bool trocar_tela = false; // Controle geral se usuário quer mudar de tela, evitar congelamentos
 
 //---------------------------------
 // VARIAVEIS GLOBAIS
 //---------------------------------
 
 // TELAS: 0 e 2 - Menu, 1 - Gerenciador, 3 - Jogo Single-player, 11 - Erros
-int tela = 0;                // Sinalizador de tela que o usuário se encontra, iniciando no menu
-int estado_tela = 0;         // Sinalizador de intenção de troca de tela, usado para animações
-Vector2 posicao_mouse;       // Posição do mouse
-Vector2 posicao_tela;        // Posição da tela
-int quantidade_cartas = 0;   // Representa a quantidade de cartas no vetor basico
-Color *cor_aleatoria = NULL; // Usada para a função de super trunfo e do creditos
-Image icon;                  // Para uso do icone de canto na janela
-Carta *cartas;               // Cria o ponteiro do vetor de cartas para uso no singlePlayer e gerenciador
-Carta *cartas_multiplayer;   // Cria o ponteiro do vetor de cartas para uso no multiplayer
-int botoes_resaltar = 0;     // Variavel usada para controla os botoes à serem resaltados
-char buffer[512];            // Usado para as funções do log
+float scale, scaleX, scaleY;
+int tela = 0;                     // Sinalizador de tela que o usuário se encontra, iniciando no menu
+int estado_tela = 0;              // Sinalizador de intenção de troca de tela, usado para animações
+Vector2 posicao_mouse;            // Posição do mouse
+Vector2 posicao_tela;             // Posição da tela
+int quantidade_cartas = 0;        // Representa a quantidade de cartas no vetor basico
+Color *cor_aleatoria = NULL;      // Usada para a função de super trunfo e do creditos
+Image icon;                       // Para uso do icone de canto na janela
+Carta *cartas = NULL;             // Cria o ponteiro do vetor de cartas para uso no singlePlayer e gerenciador
+Carta *cartas_multiplayer = NULL; // Cria o ponteiro do vetor de cartas para uso no multiplayer
+int botoes_resaltar = 0;          // Variavel usada para controla os botoes à serem resaltados
+char buffer[512];                 // Usado para as funções do log
+bool esta_mudo = true;    // Controle geral de sons
+bool trocar_tela = false; // Controle geral se usuário quer mudar de tela, evitar congelamentos
+int id_master_saida = 0;          // Usado para encerrar seções multiplayer
 
-int main(void)
+int main()
 {
 
     srand(time(NULL)); // Inicializa o gerador de números aleatórios
@@ -59,7 +63,6 @@ int main(void)
     //---------------------------------
 
     iniciarArquivoLog(); // Inicia o arquivo de log
-
     escreverLog("Jogo iniciado com sucesso!");
 
     if (verificaOuCriaArquivoBinario("./data/cartas.bin"))
@@ -104,9 +107,8 @@ int main(void)
     //  CONTROLE GERAL DAS TELAS
     //---------------------------------
 
-    do
+    do // LAÇO PRINCIPAL DE TELAS:
     {
-
         switch (tela)
         {
         case 0: // MENU, com inicializações das dependencias
@@ -129,6 +131,9 @@ int main(void)
             Sound sons[2];
             sons[0] = LoadSound("./sounds/sobbtn.mp3");
             sons[1] = LoadSound("./sounds/clicou.mp3");
+            sons[2] = LoadSound("./sounds/desconectou.mp3");
+            sons[3] = LoadSound("./sounds/ganhou-jogo.mp3");
+            sons[4] = LoadSound("./sounds/perdeu-jogo.mp3");
             controleSons(2, musica, sons[1]); // Tira o som da musica - PADRAO
 
             escreverLog("Abrindo a tela de MENU.");
@@ -161,11 +166,16 @@ int main(void)
             break;
 
         case 11: // ERROS
-            escreverLog("Abrindo a tela de ERROS.");
+            escreverLog("ERRO DETECTADO.");
+            UnloadRenderTexture(target);
             return 0; // Sai do código principal se tiver erro, após a tela de erro
             break;
 
         default:
+            break;
+
+        case 10: //FECHAR JOGO
+            UnloadRenderTexture(target);
             break;
 
         } // Switch relaciona qual tela o usuário se encontra
@@ -174,27 +184,27 @@ int main(void)
     //---------------------------------
     // FECHAMENTO DO JOGO E ARQUIVOS
     //---------------------------------
+
     escreverLog("Iniciando SAIDA DO GAME.");
-    CloseWindow();
-    UnloadImage(icon);
+
+    #ifdef _WIN32
+    if (id_master_saida != 0)
+    {
+        encerrar_secao(id_master_saida, NULL, NULL, NULL);
+    } // Encera uma seção aberta do multiplayer ao sair do jogo forçadamente
+    #endif
+
+    CloseWindow();                    // Fecha a tela
+    UnloadImage(icon);                // Libera memória do icone do jogo
     salvarDados("./data/cartas.bin"); // Salva os dados no arq.bin antes de sair
     escreverLog("Dados salvos no arquivo binário.");
-    free(cartas);
-    free(cor_aleatoria); // Libera a memoria das cores
-    CloseAudioDevice();
+    free(cartas);             // Libera o vetor de cartas padrão
+    free(cartas_multiplayer); // Libera o vetor de cartas do multiplayer
+    free(cor_aleatoria);      // Libera a memoria das cores / vetores
+    CloseAudioDevice();       // Fecha o sistema de audio
     snprintf(buffer, sizeof(buffer), "Saiu na tela: %d | Estado de tela estava em: %d.", tela, estado_tela);
     escreverLog(buffer);
     snprintf(buffer, sizeof(buffer), "Quantidade de cartas salvas: %d, tamanho do arquivo binario em bytes: %d", quantidade_cartas, ((int)sizeof(Carta) * quantidade_cartas) + 4);
-    escreverLog(buffer);                                                                     // Depuração
+    escreverLog(buffer); // Depuração
     return 0;
-}
-
-// Função para redimensionar a textura (Imagens) - dependencia raylib:
-Texture2D ResizeTexture(Texture2D texture, int newWidth, int newHeight)
-{
-    Image image = LoadImageFromTexture(texture);        // Obter a imagem da textura
-    ImageResize(&image, newWidth, newHeight);           // Redimensionar a imagem
-    Texture2D newTexture = LoadTextureFromImage(image); // Criar uma nova textura a partir da imagem redimensionada
-    UnloadImage(image);                                 // Liberar a imagem temporária
-    return newTexture;
 }

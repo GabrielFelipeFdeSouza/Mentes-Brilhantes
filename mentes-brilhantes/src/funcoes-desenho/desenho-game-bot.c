@@ -14,29 +14,29 @@
 #include <math.h>
 #include <stdbool.h>
 
-void desenhaJogoSingleplayer(RenderTexture2D *target, Botao *botoes, Texture2D fundo, RadioButton *botoes_radio, int sub_menu, long int contador_tempo[2], Texture2D img_carta, Carta carta, Texture2D frente_carta, int quantidades_cartas[3], int vezJogar, Texture2D img_carta_bot, Carta carta_bot, Texture2D fundo_carta, int btn_clicado)
+void desenhaJogoSingleplayer(RenderTexture2D *target, Botao *botoes, Texture2D *fundo, RadioButton *botoes_radio, int *sub_menu, long int contador_tempo[2], Texture2D *img_carta, Carta *carta, Texture2D *frente_carta, int quantidades_cartas[3], int vezJogar, Texture2D *img_carta_bot, Carta *carta_bot, Texture2D *fundo_carta, int *btn_clicado)
 {
     BeginTextureMode(*target);       // Tudo que for desenhado dessa função até EndTextureMode será automaticamente escalado
     ClearBackground(BLUE);           // Fundo da tela
-    DrawTexture(fundo, 0, 0, WHITE); // Desenha o fundo
+    DrawTexture(*fundo, 0, 0, WHITE); // Desenha o fundo
 
-    if (sub_menu == 2)
+    if (*sub_menu == 2)
     {
-        DrawTextureEx(fundo_carta, (Vector2){708, 23}, 0.0f, 1.75f, WHITE);
-        DrawTextureEx(fundo_carta, (Vector2){23, 138}, 0.0f, 1.75f, WHITE);
-        desenhaCarta(15, 130, &frente_carta, &carta, img_carta); // Chama a função para desenhar a carta na posição x,y
+        DrawTextureEx(*fundo_carta, (Vector2){708, 23}, 0.0f, 1.75f, WHITE);
+        DrawTextureEx(*fundo_carta, (Vector2){23, 138}, 0.0f, 1.75f, WHITE);
+        desenhaCarta(15, 130, frente_carta, carta, img_carta); // Chama a função para desenhar a carta na posição x,y
     } // Se estiver no submenu 2 (JOGO), desenha as cartas
 
-    if (sub_menu == 2 && contador_tempo[3] < 211)
+    if (*sub_menu == 2 && contador_tempo[3] < 211)
     {
-        desenhaCarta(700, 15, &frente_carta, &carta_bot, img_carta_bot); // Chama a função para desenhar a carta na posição x,y
+        desenhaCarta(700, 15, frente_carta, carta_bot, img_carta_bot); // Chama a função para desenhar a carta na posição x,y
     } // Se estiver no submenu 2 (JOGO) e estiver na faixa de transição, desenha a carta do bot
-    else if (sub_menu == 2)
+    else if (*sub_menu == 2)
     {
-        DrawTextureEx(fundo_carta, (Vector2){700, 15}, 0.0f, 1.75f, WHITE);
+        DrawTextureEx(*fundo_carta, (Vector2){700, 15}, 0.0f, 1.75f, WHITE);
     }
 
-    switch (sub_menu)
+    switch (*sub_menu)
     {
     case 0:
         incluir_menu1(botoes_radio);
@@ -62,27 +62,27 @@ void desenhaJogoSingleplayer(RenderTexture2D *target, Botao *botoes, Texture2D f
         break;
     }
 
-    desenharBotaoTxt(botoes[0], 1);
+    desenharBotaoTxt(&botoes[0]);
     // DrawText(TextFormat("Posição do mouse: (%.2f,%.2f) - FPS: %d", posicao_mouse.x, posicao_mouse.y, GetFPS()), 1, 1, 20, RED);
 
-    if (sub_menu == 0)
+    if (*sub_menu == 0)
     {
-        desenharBotaoTxt(botoes[1], 1);
+        desenharBotaoTxt(&botoes[1]);
     }
 
-    if (sub_menu == 2 && vezJogar == 1 && contador_tempo[2] < 150)
+    if (*sub_menu == 2 && vezJogar == 1 && contador_tempo[2] < 150)
     {
         contador_tempo[2]++;
         DrawText(TextFormat("VEZ DO JOGADOR JOGAR!"), 320, 300, 29, WHITE);
     }
 
-    if (sub_menu == 2 && vezJogar == 0 && contador_tempo[2] < 150)
+    if (*sub_menu == 2 && vezJogar == 0 && contador_tempo[2] < 150)
     {
         contador_tempo[2]++;
         DrawText(TextFormat("VEZ DO BOT JOGAR!"), 335, 300, 30, WHITE);
     }
 
-    switch (btn_clicado)
+    switch (*btn_clicado)
     {
     case 0:
         DrawRectangleLinesEx((Rectangle){36, 374, 244, 35}, 3, RED);
