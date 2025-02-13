@@ -89,7 +89,5 @@ Nesse ambiente os requesitos são parecidos com os do windows, mas há um detalh
 2. Bibliotecas de audio e vídeo: Durante a compilação no *passo 2*, mostramos bibliotecas adicionais nescessárias para compilação do jogo.
 ---
 
-## 🎮 Como Jogar:  
-Explicações e regras do jogo, incluindo dicas e estratégias.
-
-//FUTURO
+## 🎮 MAIS DETALHES:  
+Para mais detalhes acesse o documento do manual de regras e operações hospedado em http://gg128.ddnsfree.com
