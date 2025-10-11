@@ -1,0 +1,13 @@
+[00:07:33]GAME: Jogo iniciado com sucesso!
+[00:07:33]GAME: Arquivo binário não idenficado, gerando um novo.
+[00:07:33]GAME: Lendo dados do arquivo CSV!
+[00:07:33]GAME: Abrindo arquivo pdf...
+[00:07:34]GAME: Lendo cartas para o modo de jogo multiplayer
+[00:07:34]GAME: QUANTIDADE DE CARTAS LIDAS DO VETOR PRINCIPAL: 32
+[00:07:34]GAME: Iniciando as configurações padrões de tela, e setando as configurações gerais.
+[00:07:35]GAME: Iniciando as configurações de som e musica.
+[00:07:35]GAME: Abrindo a tela de MENU.
+[00:07:38]GAME: Iniciando SAIDA DO GAME.
+[00:07:38]GAME: Dados salvos no arquivo binário.
+[00:07:38]GAME: Saiu na tela: 10 | Estado de tela estava em: 7.
+[00:07:38]GAME: Quantidade de cartas salvas: 32, tamanho do arquivo binario em bytes: 10756
