@@ -1,7 +1,7 @@
 # 🎮 **Projeto Mentes Brilhantes**  
 
-### Projeto para a disciplina de *Fundamentos de Programação 2*  
-#### Professor Orientador: Muriel de Souza Godoi  
+### Projeto para a disciplina de *Fundamentos de Programação 2 - FDCO2A*  
+#### Professor Orientador: Prof. Me. Muriel de Souza Godoi  
 #### Universidade Tecnológica Federal do Paraná (UTFPR) - Campus Apucarana  
 
 ---
@@ -15,6 +15,7 @@
 
 ## 📋 Informações:  
 **Mentes Brilhantes** é um jogo do estilo de *Super Trunfo* desenvolvido como projeto acadêmico, requesito parcial de avaliação da disciplina. Seu tema remete foco em personagens que envolvem mentes brilhantes de diferentes áreas do conhecimento.  
+O jogo foi desenvolvido com a linguagem C, com a biblioteca gráfica RayLib, e suas dependecias no backend de servidor foi usado PHP.
 
 ---
 
@@ -90,4 +91,4 @@ Nesse ambiente os requesitos são parecidos com os do windows, mas há um detalh
 ---
 
 ## 🎮 MAIS DETALHES:  
-Para mais detalhes acesse o documento do manual de regras e operações hospedado em http://gg128.ddnsfree.com
+Para mais detalhes acesse o documento do manual de regras e operações presentes nesse repositório ou hospedado em http://gg128.ddnsfree.com
