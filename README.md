@@ -14,7 +14,7 @@
 ---
 
 ## 📋 Informações:  
-**Mentes Brilhantes** é um jogo do estilo de *Super Trunfo* desenvolvido como projeto acadêmico, requesito parcial de avaliação da disciplina. Seu tema remete foco em personagens que envolvem mentes brilhantes de diferentes áreas do conhecimento.  
+**Mentes Brilhantes** é um jogo do estilo de *Super Trunfo* desenvolvido como projeto acadêmico, requesito parcial de avaliação da disciplina de fundamentos de programação 2. Seu tema remete foco em personagens que envolvem mentes brilhantes de diferentes áreas do conhecimento.  
 O jogo foi desenvolvido com a linguagem C, com a biblioteca gráfica RayLib, e suas dependecias no backend de servidor foi usado PHP.
 
 ---
